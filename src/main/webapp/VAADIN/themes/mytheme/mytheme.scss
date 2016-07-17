@@ -28,9 +28,33 @@
 // Example variants can be copy/pasted from https://vaadin.com/wiki/-/wiki/Main/Valo+Examples
 
 @import "../valo/valo.scss";
-
+@include font(RussoOne,
+              '../../../../mytheme/fonts/RussoOne-Regular');
 @mixin mytheme {
   @include valo;
 
   // Insert your own theme rules here
+  
+  // Метка кол-ва посещений
+  .visitors-counter-label {
+      font-size: 48px;
+  }
+  .logo-label
+  {
+      font-family: RussoOne,Calibri,Arial,sans-serif;
+      font-size: 48px;
+      font-style: italic;
+  }
+  .celcium
+  {
+     
+  }
+  .celcium:after
+    {
+  content:" \00b0 C"; 
+    }
+    
+    * {
+        font-family: sans-serif;
+    }
 }
