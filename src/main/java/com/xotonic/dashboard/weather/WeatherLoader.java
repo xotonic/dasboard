@@ -1,5 +1,5 @@
 
-package com.xotonic.dashboard;
+package com.xotonic.dashboard.weather;
 
 public interface WeatherLoader {
     

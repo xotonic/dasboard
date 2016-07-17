@@ -10,6 +10,8 @@ import com.vaadin.server.VaadinServlet;
 import com.vaadin.shared.ui.combobox.FilteringMode;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
+import com.vaadin.ui.Button.ClickListener;
+import com.xotonic.dashboard.weather.*;
 import java.util.ArrayList;
 
 /**
@@ -19,9 +21,20 @@ import java.util.ArrayList;
 @Widgetset("com.xotonic.dashboard.DashboardAppWidgetset")
 public class DashboardUI extends UI {
 
+    public WeatherData weatherData = new WeatherData();
+    public final int defaultCityId = Cities.NSK.ordinal() - 1;
+    public void updateWeather(int id)
+    {
+        OpenWeatherMap owm = new OpenWeatherMap();
+        weatherData = owm.getData(Cities.values()[id]);
+    }
+    
     @Override
     protected void init(VaadinRequest vaadinRequest) {
-       
+        
+        // Default city is Moscow
+        //updateWeather(defaultCityId);
+        
         VerticalLayout vlayout = new VerticalLayout();
         vlayout.addStyleName("outlined");
         vlayout.setSizeFull();
@@ -43,21 +56,25 @@ public class DashboardUI extends UI {
         vlayout.setExpandRatio(hlayout,0.7f);
         
         
+        
+        //final ProgressBar pbar = new ProgressBar();
+        //pbar.setIndeterminate(true);
+        
         /*
          WEATHER
         */
-        Panel weatherPanel =  new Panel("Погода");
+        final Panel weatherPanel =  new Panel("Погода");
         weatherPanel.setSizeFull();
         
-        ArrayList<String> places = new ArrayList<>(); 
+        final ArrayList<String> places = new ArrayList<>(); 
         places.add("Москва");
         places.add("Новосибирск");
         places.add("Санкт-Петербург");
 
-        ComboBox placeSelect = new ComboBox("Местоположение", places);
+        final ComboBox placeSelect = new ComboBox("Местоположение", places);
  
-        placeSelect.setInputPrompt("Место не выбрано");
- 
+        //placeSelect.setInputPrompt("Место не выбрано");
+        placeSelect.select(defaultCityId);
         placeSelect.setWidth(100.0f, Unit.PERCENTAGE);
  
         // Set the appropriate filtering mode for this example
@@ -66,20 +83,38 @@ public class DashboardUI extends UI {
  
         // Disallow null selections
         placeSelect.setNullSelectionAllowed(false);
-        
-        Label currentTemperature = new Label("12");
+        placeSelect.setValue(places.get(defaultCityId));
+        final Label currentTemperature = new Label( "-" );
         currentTemperature.setStyleName("celcium", true);
         currentTemperature.setCaption("Температура текущая");
         
-        Label tomorrowTemperature = new Label("12");
+        final Label tomorrowTemperature = new Label("-");
         tomorrowTemperature.setCaption("Температура на завтра");
         tomorrowTemperature.setStyleName("celcium", true);
 
         FormLayout weatherFormLayout = new FormLayout(placeSelect, currentTemperature, tomorrowTemperature);
         Button updateWeatherButton = new Button("Обновить");
+        updateWeatherButton.addClickListener(new ClickListener() {
+          
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                //pbar.setVisible(true);
+                String selectedCity = (String)placeSelect.getValue();
+                int id = places.indexOf(selectedCity);
+                updateWeather(id);
+                currentTemperature.setValue(Float.toString(weatherData.celcium_today));
+                tomorrowTemperature.setValue(Float.toString(weatherData.celcium_tomorrow));
+                //pbar.setVisible(false);
+                Notification.show("Погода обновлена",selectedCity, Notification.Type.HUMANIZED_MESSAGE );
+            }
+        });
+        
         VerticalLayout weatherMainLayout = new VerticalLayout(weatherFormLayout);
         weatherMainLayout.setSizeFull();
         weatherMainLayout.setMargin(true);
+        //weatherMainLayout.addComponent(pbar);
+        //weatherMainLayout.setComponentAlignment(pbar, Alignment.BOTTOM_CENTER);
+        //pbar.setVisible(false);
         weatherMainLayout.addComponent(updateWeatherButton);
         weatherMainLayout.setComponentAlignment(updateWeatherButton, Alignment.BOTTOM_CENTER);
         weatherPanel.setContent(weatherMainLayout);
@@ -157,6 +192,8 @@ public class DashboardUI extends UI {
 
         vlayout.addComponent(infoHLayout);
         vlayout.setExpandRatio(infoHLayout,0.1f);
+        
+        
 
     }
 
