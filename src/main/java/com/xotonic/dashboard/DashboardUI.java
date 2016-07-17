@@ -32,14 +32,15 @@ public class DashboardUI extends UI {
         setContent(vlayout);
         
         
-        Label caption = new Label("Тестовое сетевое приложение", ContentMode.HTML);
+        Label caption = new Label("Тестовое сетевое приложение");
+        caption.setStyleName("logo-label", true);
         caption.setWidth(null);
         vlayout.addComponent(caption);
-        vlayout.setExpandRatio(caption,0.1f);
+        vlayout.setExpandRatio(caption,0.2f);
 
         vlayout.setComponentAlignment(caption, Alignment.MIDDLE_CENTER);
         vlayout.addComponent(hlayout);
-        vlayout.setExpandRatio(hlayout,0.8f);
+        vlayout.setExpandRatio(hlayout,0.7f);
         
         
         /*
@@ -57,14 +58,6 @@ public class DashboardUI extends UI {
  
         placeSelect.setInputPrompt("Место не выбрано");
  
-        // Sets the combobox to show a certain property as the item caption
-        //sample.setItemCaptionPropertyId(ExampleUtil.iso3166_PROPERTY_NAME);
-        //sample.setItemCaptionMode(ItemCaptionMode.PROPERTY);
- 
-        // Sets the icon to use with the items
-        //sample.setItemIconPropertyId(ExampleUtil.iso3166_PROPERTY_FLAG);
- 
-        // Set full width
         placeSelect.setWidth(100.0f, Unit.PERCENTAGE);
  
         // Set the appropriate filtering mode for this example
@@ -75,12 +68,20 @@ public class DashboardUI extends UI {
         placeSelect.setNullSelectionAllowed(false);
         
         Label currentTemperature = new Label("12");
+        currentTemperature.setStyleName("celcium", true);
         currentTemperature.setCaption("Температура текущая");
         
         Label tomorrowTemperature = new Label("12");
         tomorrowTemperature.setCaption("Температура на завтра");
-        
-        FormLayout weatherMainLayout = new FormLayout(placeSelect, currentTemperature, tomorrowTemperature);
+        tomorrowTemperature.setStyleName("celcium", true);
+
+        FormLayout weatherFormLayout = new FormLayout(placeSelect, currentTemperature, tomorrowTemperature);
+        Button updateWeatherButton = new Button("Обновить");
+        VerticalLayout weatherMainLayout = new VerticalLayout(weatherFormLayout);
+        weatherMainLayout.setSizeFull();
+        weatherMainLayout.setMargin(true);
+        weatherMainLayout.addComponent(updateWeatherButton);
+        weatherMainLayout.setComponentAlignment(updateWeatherButton, Alignment.BOTTOM_CENTER);
         weatherPanel.setContent(weatherMainLayout);
         /*
          CURRENCY
@@ -88,17 +89,55 @@ public class DashboardUI extends UI {
         
         Panel currencyPanel =  new Panel("Валюта");
         currencyPanel.setSizeFull();
+        GridLayout currencyGridLayout = new GridLayout();
+        currencyGridLayout.setSizeFull();
+        currencyGridLayout.setRows(3);
+        currencyGridLayout.setColumns(3);
+        currencyGridLayout.addComponent(new Label("USD"), 0, 1);
+        currencyGridLayout.addComponent(new Label("EUR"), 0, 2);
+        currencyGridLayout.addComponent(new Label("Вчера"), 1, 0);
+        currencyGridLayout.addComponent(new Label("Сегодня"), 2, 0);
+        
+        Label usdTodayLabel = new Label("0");
+        Label usdYstrdyLabel = new Label("0");
+        Label eurTodayLabel = new Label("0");
+        Label eurYstrdyLabel = new Label("0");
+
+        currencyGridLayout.addComponent(usdTodayLabel,  1, 2);
+        currencyGridLayout.addComponent(usdYstrdyLabel, 1, 1);
+        currencyGridLayout.addComponent(eurTodayLabel,  2, 1);
+        currencyGridLayout.addComponent(eurYstrdyLabel, 2, 2);
+
+        
+        VerticalLayout mainCurrencyLayout = new VerticalLayout(currencyGridLayout);
+        mainCurrencyLayout.setSizeFull();
+        mainCurrencyLayout.setMargin(true);
+        mainCurrencyLayout.setSpacing(true);
+        Button updateCurrencyButton = new Button("Обновить");
+        mainCurrencyLayout.addComponent(updateCurrencyButton);
+        mainCurrencyLayout.setComponentAlignment(updateCurrencyButton, Alignment.BOTTOM_CENTER);
+        currencyPanel.setContent(mainCurrencyLayout);
+        /*
+         VISITORS
+        */
         Panel visitorsPanel =  new Panel("Счетчик посещений");
+        Label ipCountLabel = new Label("1488");
+        ipCountLabel.setSizeUndefined();
+        ipCountLabel.setStyleName("visitors-counter-label", true);
         visitorsPanel.setSizeFull();
+        VerticalLayout visitorsMainLayout = new VerticalLayout(ipCountLabel);
+        visitorsMainLayout.setSizeFull();
+        visitorsMainLayout.setComponentAlignment(ipCountLabel, Alignment.MIDDLE_CENTER);
+        visitorsPanel.setContent( visitorsMainLayout);
+       
         hlayout.setSpacing(true);
         hlayout.addComponent(weatherPanel);
         hlayout.addComponent(currencyPanel);
         hlayout.addComponent(visitorsPanel);
-        
-        //Label timeStatusLabel = new Label("Информация по состоянию на ");
+         /*
+         FOOTER
+        */
         Label timeStatusValueLabel = new Label("Начало войны");
-        //Label ipLabel = new Label("Ваш IP");
-        //ipLabel.
         timeStatusValueLabel.setCaption("Информация по состоянию на");
         Label ipValueLabel = new Label("192.168.1.1");
         ipValueLabel.setCaption("Ваш IP");
