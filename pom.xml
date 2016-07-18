@@ -86,6 +86,24 @@
     <artifactId>json</artifactId>
     <version>20090211</version>
 </dependency>
+<dependency>
+  <groupId>com.github.dvdme</groupId>
+  <artifactId>ForecastIOLib</artifactId>
+  <version>1.5.1</version>
+</dependency>
+<dependency>
+  <groupId>com.eclipsesource.minimal-json</groupId>
+  <artifactId>minimal-json</artifactId>
+  <version>0.9.4</version>
+</dependency>
+
+
+<dependency>
+    <groupId>com.vaadin</groupId>
+    <artifactId>vaadin-push</artifactId>
+</dependency>
+
+
 		<!--
 		  Needed when using the widgetset optimizer (custom ConnectorBundleLoaderFactory).
 		  

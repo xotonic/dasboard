@@ -29,35 +29,35 @@
 
 @import "../valo/valo.scss";
 @include font(RussoOne,
-              '../../../../mytheme/fonts/RussoOne-Regular');
+'../../../../mytheme/fonts/RussoOne-Regular');
 @mixin mytheme {
-  @include valo;
+    @include valo;
 
-  // Insert your own theme rules here
-  
-  // Метка кол-ва посещений
-  .visitors-counter-label {
-      font-size: 48px;
-  }
-  .logo-label
-  {
-      font-family: RussoOne,Calibri,Arial,sans-serif;
-      font-size: 48px;
-      font-style: italic;
-  }
-  .logo-label:hover
-  {
-      color: red;
-  }
-  .celcium
-  {
-     
-  }
-  .celcium:after
-    {
-  content:" \00b0 C"; 
+    // Insert your own theme rules here
+
+    // Метка кол-ва посещений
+    .visitors-counter-label {
+        font-size: 48px;
     }
-    
+    .logo-label
+    {
+        font-family: RussoOne,Calibri,Arial,sans-serif;
+        font-size: 48px;
+        font-style: italic;
+    }
+    .logo-label:hover
+        {
+        color: red;
+    }
+    .celcium
+    {
+
+    }
+    .celcium:after
+        {
+        content:" \00b0 C"; 
+    }
+
     * {
         font-family: sans-serif;
     }

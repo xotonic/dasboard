@@ -1,31 +1,30 @@
 package com.xotonic.dashboard;
 
+import com.vaadin.annotations.Push;
 import javax.servlet.annotation.WebServlet;
 
-import com.vaadin.annotations.Theme;
-import com.vaadin.annotations.VaadinServletConfiguration;
-import com.vaadin.annotations.Widgetset;
+import com.vaadin.annotations.*;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.shared.ui.combobox.FilteringMode;
-import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.*;
-import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.Button.*;
 import com.xotonic.dashboard.weather.*;
 import java.util.ArrayList;
 
 /**
- *
+ * Отрисовка UI и управление событиями
  */
 @Theme("mytheme")
 @Widgetset("com.xotonic.dashboard.DashboardAppWidgetset")
+@Push // Аддон для управлением UI из другого потока
 public class DashboardUI extends UI {
 
     public WeatherData weatherData = new WeatherData();
     public final int defaultCityId = Cities.NSK.ordinal() - 1;
     public void updateWeather(int id)
     {
-        OpenWeatherMap owm = new OpenWeatherMap();
+        WeatherLoader owm = new ForecastIOLoader();
         weatherData = owm.getData(Cities.values()[id]);
     }
     
@@ -68,8 +67,8 @@ public class DashboardUI extends UI {
         
         final ArrayList<String> places = new ArrayList<>(); 
         places.add("Москва");
-        places.add("Новосибирск");
         places.add("Санкт-Петербург");
+        places.add("Новосибирск");
 
         final ComboBox placeSelect = new ComboBox("Местоположение", places);
  
@@ -94,20 +93,8 @@ public class DashboardUI extends UI {
 
         FormLayout weatherFormLayout = new FormLayout(placeSelect, currentTemperature, tomorrowTemperature);
         Button updateWeatherButton = new Button("Обновить");
-        updateWeatherButton.addClickListener(new ClickListener() {
-          
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                //pbar.setVisible(true);
-                String selectedCity = (String)placeSelect.getValue();
-                int id = places.indexOf(selectedCity);
-                updateWeather(id);
-                currentTemperature.setValue(Float.toString(weatherData.celcium_today));
-                tomorrowTemperature.setValue(Float.toString(weatherData.celcium_tomorrow));
-                //pbar.setVisible(false);
-                Notification.show("Погода обновлена",selectedCity, Notification.Type.HUMANIZED_MESSAGE );
-            }
-        });
+        ClickListenerImpl updateWeatherListener =  new ClickListenerImpl(placeSelect, places, currentTemperature, tomorrowTemperature);
+        updateWeatherButton.addClickListener(updateWeatherListener);
         
         VerticalLayout weatherMainLayout = new VerticalLayout(weatherFormLayout);
         weatherMainLayout.setSizeFull();
@@ -193,12 +180,44 @@ public class DashboardUI extends UI {
         vlayout.addComponent(infoHLayout);
         vlayout.setExpandRatio(infoHLayout,0.1f);
         
-        
+        this.access(updateWeatherListener); 
 
     }
 
     @WebServlet(urlPatterns = "/*", name = "DashboardUIServlet", asyncSupported = true)
     @VaadinServletConfiguration(ui = DashboardUI.class, productionMode = false)
     public static class DashboardUIServlet extends VaadinServlet {
+    }
+
+    private class ClickListenerImpl implements ClickListener ,Runnable {
+
+        private final ComboBox placeSelect;
+        private final ArrayList<String> places;
+        private final Label currentTemperature;
+        private final Label tomorrowTemperature;
+
+        public ClickListenerImpl(ComboBox placeSelect, ArrayList<String> places, Label currentTemperature, Label tomorrowTemperature) {
+            this.placeSelect = placeSelect;
+            this.places = places;
+            this.currentTemperature = currentTemperature;
+            this.tomorrowTemperature = tomorrowTemperature;
+        }
+
+        @Override
+        public void buttonClick(Button.ClickEvent event) {
+            //pbar.setVisible(true);
+            String selectedCity = (String)placeSelect.getValue();
+            int id = places.indexOf(selectedCity);
+            updateWeather(id);
+            currentTemperature.setValue(Float.toString(weatherData.celcium_today));
+            tomorrowTemperature.setValue(Float.toString(weatherData.celcium_tomorrow));
+            //pbar.setVisible(false);
+            Notification.show("Погода обновлена",selectedCity, Notification.Type.HUMANIZED_MESSAGE );
+        }
+
+        @Override
+        public void run() {
+            buttonClick(null);
+        }
     }
 }
