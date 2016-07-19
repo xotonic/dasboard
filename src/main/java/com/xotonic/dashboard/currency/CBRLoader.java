@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package com.xotonic.dashboard.currency;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -15,9 +11,19 @@ import org.w3c.dom.Element;
  * Парсинг курса валют с сайта Центрального Банка России
  * @author xotonic
  */
-public class CBRLoader {
+public class CBRLoader implements CurrencyLoader {
     private final String ID_USD = "R01235";
     private final String ID_EUR = "R01239";
+
+    @Override
+    public CurrencyData getData() {
+        CurrencyData cd = new CurrencyData();
+        cd.USD = 31.0f;
+        cd.EUR = 41.0f;
+        cd.EURDelta = 2.0f;
+        cd.USDDelta = -1.0f;
+        return cd;
+    }
     
     
 

@@ -4,13 +4,17 @@ import com.vaadin.annotations.Push;
 import javax.servlet.annotation.WebServlet;
 
 import com.vaadin.annotations.*;
+import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
+import com.vaadin.server.WebBrowser;
 import com.vaadin.shared.ui.combobox.FilteringMode;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Button.*;
+import com.xotonic.dashboard.currency.*;
 import com.xotonic.dashboard.weather.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * Отрисовка UI и управление событиями
@@ -21,11 +25,26 @@ import java.util.ArrayList;
 public class DashboardUI extends UI {
 
     public WeatherData weatherData = new WeatherData();
+    public CurrencyData currencyData = new CurrencyData();
+    
     public final int defaultCityId = Cities.NSK.ordinal() - 1;
     public void updateWeather(int id)
     {
-        WeatherLoader owm = new ForecastIOLoader();
-        weatherData = owm.getData(Cities.values()[id]);
+        WeatherLoader loader = new ForecastIOLoader();
+        weatherData = loader.getData(Cities.values()[id]);
+    }
+    
+    public void updateCurrency()
+    {
+        CurrencyLoader loader = new CBRLoader();
+        currencyData = loader.getData();
+    }
+    
+    private Label timeStatusValueLabel;
+    public void updateDateLabel()
+    {
+        if (timeStatusValueLabel != null)
+        timeStatusValueLabel.setValue(Calendar.getInstance().getTime().toString());
     }
     
     @Override
@@ -93,7 +112,7 @@ public class DashboardUI extends UI {
 
         FormLayout weatherFormLayout = new FormLayout(placeSelect, currentTemperature, tomorrowTemperature);
         Button updateWeatherButton = new Button("Обновить");
-        ClickListenerImpl updateWeatherListener =  new ClickListenerImpl(placeSelect, places, currentTemperature, tomorrowTemperature);
+        UpdateWeatherLisnener updateWeatherListener =  new UpdateWeatherLisnener(placeSelect, places, currentTemperature, tomorrowTemperature);
         updateWeatherButton.addClickListener(updateWeatherListener);
         
         VerticalLayout weatherMainLayout = new VerticalLayout(weatherFormLayout);
@@ -117,18 +136,18 @@ public class DashboardUI extends UI {
         currencyGridLayout.setColumns(3);
         currencyGridLayout.addComponent(new Label("USD"), 0, 1);
         currencyGridLayout.addComponent(new Label("EUR"), 0, 2);
-        currencyGridLayout.addComponent(new Label("Вчера"), 1, 0);
-        currencyGridLayout.addComponent(new Label("Сегодня"), 2, 0);
+        currencyGridLayout.addComponent(new Label("Курс"), 1, 0);
+        currencyGridLayout.addComponent(new Label("Изменение"), 2, 0);
         
-        Label usdTodayLabel = new Label("0");
-        Label usdYstrdyLabel = new Label("0");
-        Label eurTodayLabel = new Label("0");
-        Label eurYstrdyLabel = new Label("0");
-
-        currencyGridLayout.addComponent(usdTodayLabel,  1, 2);
-        currencyGridLayout.addComponent(usdYstrdyLabel, 1, 1);
-        currencyGridLayout.addComponent(eurTodayLabel,  2, 1);
-        currencyGridLayout.addComponent(eurYstrdyLabel, 2, 2);
+        final Label usdLabel = new Label("0");
+        final Label usdDeltaLabel = new Label("0");
+        final Label eurLabel = new Label("0");
+        final Label eurDeltaLabel = new Label("0");
+        
+        currencyGridLayout.addComponent(usdLabel,  1, 1);
+        currencyGridLayout.addComponent(eurLabel,  1, 2);
+        currencyGridLayout.addComponent(usdDeltaLabel, 2, 1);
+        currencyGridLayout.addComponent(eurDeltaLabel, 2, 2);
 
         
         VerticalLayout mainCurrencyLayout = new VerticalLayout(currencyGridLayout);
@@ -139,6 +158,10 @@ public class DashboardUI extends UI {
         mainCurrencyLayout.addComponent(updateCurrencyButton);
         mainCurrencyLayout.setComponentAlignment(updateCurrencyButton, Alignment.BOTTOM_CENTER);
         currencyPanel.setContent(mainCurrencyLayout);
+        
+        UpdateCurrencyListener updateCurrencyListener = new UpdateCurrencyListener(usdLabel, usdDeltaLabel, eurLabel, eurDeltaLabel);
+        updateCurrencyButton.addClickListener(updateCurrencyListener);
+        
         /*
          VISITORS
         */
@@ -159,9 +182,15 @@ public class DashboardUI extends UI {
          /*
          FOOTER
         */
-        Label timeStatusValueLabel = new Label("Начало войны");
+        timeStatusValueLabel = new Label("Начало войны");
         timeStatusValueLabel.setCaption("Информация по состоянию на");
-        Label ipValueLabel = new Label("192.168.1.1");
+        
+        
+        // Find the context we are running in and get the browser
+        // information from that.
+        final WebBrowser webBrowser = Page.getCurrent().getWebBrowser();
+        
+        Label ipValueLabel = new Label(webBrowser.getAddress());
         ipValueLabel.setCaption("Ваш IP");
 
         HorizontalLayout infoHLayout = new HorizontalLayout();
@@ -181,7 +210,7 @@ public class DashboardUI extends UI {
         vlayout.setExpandRatio(infoHLayout,0.1f);
         
         this.access(updateWeatherListener); 
-
+        this.access(updateCurrencyListener);
     }
 
     @WebServlet(urlPatterns = "/*", name = "DashboardUIServlet", asyncSupported = true)
@@ -189,14 +218,14 @@ public class DashboardUI extends UI {
     public static class DashboardUIServlet extends VaadinServlet {
     }
 
-    private class ClickListenerImpl implements ClickListener ,Runnable {
+    private class UpdateWeatherLisnener implements ClickListener ,Runnable {
 
         private final ComboBox placeSelect;
         private final ArrayList<String> places;
         private final Label currentTemperature;
         private final Label tomorrowTemperature;
 
-        public ClickListenerImpl(ComboBox placeSelect, ArrayList<String> places, Label currentTemperature, Label tomorrowTemperature) {
+        public UpdateWeatherLisnener(ComboBox placeSelect, ArrayList<String> places, Label currentTemperature, Label tomorrowTemperature) {
             this.placeSelect = placeSelect;
             this.places = places;
             this.currentTemperature = currentTemperature;
@@ -213,8 +242,46 @@ public class DashboardUI extends UI {
             tomorrowTemperature.setValue(Float.toString(weatherData.celcium_tomorrow));
             //pbar.setVisible(false);
             Notification.show("Погода обновлена",selectedCity, Notification.Type.HUMANIZED_MESSAGE );
+            updateDateLabel();
+
         }
 
+        @Override
+        public void run() {
+            buttonClick(null);
+        }
+    }
+    
+
+    private class UpdateCurrencyListener implements ClickListener,Runnable {
+
+        private final Label usdLabel;
+        private final Label usdDeltaLabel;
+        private final Label eurLabel;
+        private final Label eurDeltaLabel;
+
+        public UpdateCurrencyListener(Label usdLabel, Label usdDeltaLabel, Label eurLabel, Label eurDeltaLabel) {
+            this.usdLabel = usdLabel;
+            this.usdDeltaLabel = usdDeltaLabel;
+            this.eurLabel = eurLabel;
+            this.eurDeltaLabel = eurDeltaLabel;
+        }
+
+        @Override
+        public void buttonClick(Button.ClickEvent event) {
+            updateCurrency();
+            usdLabel.setValue(Float.toString( currencyData.USD));
+            usdDeltaLabel.setValue(Float.toString(currencyData.USDDelta));
+            usdDeltaLabel.setStyleName( currencyData.USDDelta < 0 ?
+                    "currency-delta-negative" : "currency-delta-positive", true);
+            
+            eurLabel.setValue(Float.toString(currencyData.EUR));
+            eurDeltaLabel.setValue(Float.toString(currencyData.EURDelta));
+            eurDeltaLabel.setStyleName( currencyData.EURDelta < 0 ?
+                    "currency-delta-negative" : "currency-delta-positive", true);
+            Notification.show("Валюта обновлена", Notification.Type.HUMANIZED_MESSAGE );
+            updateDateLabel();
+        }
         @Override
         public void run() {
             buttonClick(null);
