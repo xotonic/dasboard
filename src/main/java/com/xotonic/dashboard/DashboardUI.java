@@ -12,6 +12,7 @@ import com.vaadin.shared.ui.combobox.FilteringMode;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Button.*;
 import com.xotonic.dashboard.currency.*;
+import com.xotonic.dashboard.visitors.*;
 import com.xotonic.dashboard.weather.*;
 import java.math.RoundingMode;
 import java.text.DateFormat;
@@ -28,9 +29,19 @@ import java.util.Calendar;
 @Push // Аддон для управлением UI из другого потока
 public class DashboardUI extends UI {
 
-    public WeatherData weatherData = new WeatherData();
-    public CurrencyData currencyData = new CurrencyData();
     
+    /*
+        Основная информация, реализация скрыта
+        Просто получаем ее через интерфейсы
+    */
+    // Погода
+    public WeatherData weatherData = new WeatherData();
+    // Курсы валют
+    public CurrencyData currencyData = new CurrencyData();
+    // Посещения
+    public VisitorsData visitorsData = new VisitorsData();
+    
+    // Получение этой информации
     public final int defaultCityId = Cities.NSK.ordinal() - 1;
     public void updateWeather(int id)
     {
@@ -44,6 +55,12 @@ public class DashboardUI extends UI {
         currencyData = loader.getData();
     }
     
+    public void updateVisitors()
+    {
+        VisitorsLoader loader = new MongoVisitorsLoader();
+        visitorsData = loader.getData();
+    }
+    
     private Label timeStatusValueLabel;
     public void updateDateLabel()
     {
@@ -52,6 +69,8 @@ public class DashboardUI extends UI {
                 new SimpleDateFormat("dd/MM/yyyy HH:mm:ss")
                         .format( Calendar.getInstance().getTime()));
     }
+    
+    // Форматирование для разлиных величин
     
     DecimalFormat currencyFormat;
     DecimalFormat currencyDeltaFormat;
@@ -63,13 +82,10 @@ public class DashboardUI extends UI {
         
         currencyFormat = new DecimalFormat("#.####");
         currencyFormat.setRoundingMode(RoundingMode.CEILING);
-        currencyDeltaFormat = new DecimalFormat("+#.####");
+        currencyDeltaFormat = new DecimalFormat("+#.####;-#.####");
         currencyDeltaFormat.setRoundingMode(RoundingMode.CEILING);
         weatherFormat = new DecimalFormat("#.#");
         weatherFormat.setRoundingMode(RoundingMode.CEILING);
-        
-        // Default city is Moscow
-        //updateWeather(defaultCityId);
         
         VerticalLayout vlayout = new VerticalLayout();
         vlayout.addStyleName("outlined");
@@ -194,19 +210,29 @@ public class DashboardUI extends UI {
          VISITORS
         */
         Panel visitorsPanel =  new Panel("Счетчик посещений");
-        Label ipCountLabel = new Label("1488");
-        ipCountLabel.setSizeUndefined();
-        ipCountLabel.setStyleName("visitors-counter-label", true);
+        Label ipUniqueLabel = new Label("0");
+        ipUniqueLabel.setCaption("Уникальных");
+        ipUniqueLabel.setSizeUndefined();
+        ipUniqueLabel.setStyleName("visitors-counter-label", true);
+        
+        Label ipTotalLabel = new Label("0");
+        ipTotalLabel.setCaption("Всего");
+        ipTotalLabel.setSizeUndefined();
+        ipTotalLabel.setStyleName("visitors-counter-label", true);
+        
         visitorsPanel.setSizeFull();
-        VerticalLayout visitorsMainLayout = new VerticalLayout(ipCountLabel);
+        VerticalLayout visitorsMainLayout = new VerticalLayout(ipUniqueLabel,ipTotalLabel);
         visitorsMainLayout.setSizeFull();
-        visitorsMainLayout.setComponentAlignment(ipCountLabel, Alignment.MIDDLE_CENTER);
+        visitorsMainLayout.setComponentAlignment(ipUniqueLabel, Alignment.MIDDLE_CENTER);
+        visitorsMainLayout.setComponentAlignment(ipTotalLabel, Alignment.MIDDLE_CENTER);
         visitorsPanel.setContent( visitorsMainLayout);
        
         hlayout.setSpacing(true);
         hlayout.addComponent(weatherPanel);
         hlayout.addComponent(currencyPanel);
         hlayout.addComponent(visitorsPanel);
+        
+        UpdateVisitorsListener updateVisitorsListener = new UpdateVisitorsListener(ipUniqueLabel, ipTotalLabel);
          /*
          FOOTER
         */
@@ -239,6 +265,7 @@ public class DashboardUI extends UI {
         
         this.access(updateWeatherListener); 
         this.access(updateCurrencyListener);
+        this.access(updateVisitorsListener);
     }
 
     @WebServlet(urlPatterns = "/*", name = "DashboardUIServlet", asyncSupported = true)
@@ -313,4 +340,23 @@ public class DashboardUI extends UI {
             buttonClick(null);
         }
     }
+     private class UpdateVisitorsListener implements ClickListener,Runnable {
+        private final Label uniqueLabel;
+        private final Label totalLabel;
+        public UpdateVisitorsListener(Label uniqueLabel, Label totalLabel) {
+            this.uniqueLabel = uniqueLabel;
+            this.totalLabel = totalLabel;
+        }
+        @Override
+        public void buttonClick(ClickEvent event) {
+            updateVisitors();
+            uniqueLabel.setValue(Integer.toString(visitorsData.unique) );
+            totalLabel.setValue(Integer.toString(visitorsData.total) );
+        }
+
+        @Override
+        public void run() {
+            buttonClick(null);
+        }
+ }
 }
