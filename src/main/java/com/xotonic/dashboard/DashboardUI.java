@@ -60,7 +60,10 @@ public class DashboardUI extends UI {
         VisitorsLoader loader = new MongoVisitorsLoader();
         visitorsData = loader.getData();
     }
-    
+    public void upsertAddress(String ip)
+    {
+        new MongoVisitorsLoader().registerIP(ip);
+    }
     private Label timeStatusValueLabel;
     public void updateDateLabel()
     {
@@ -244,6 +247,7 @@ public class DashboardUI extends UI {
         // information from that.
         final WebBrowser webBrowser = Page.getCurrent().getWebBrowser();
         
+        upsertAddress(webBrowser.getAddress());
         Label ipValueLabel = new Label(webBrowser.getAddress());
         ipValueLabel.setCaption("Ваш IP");
 
