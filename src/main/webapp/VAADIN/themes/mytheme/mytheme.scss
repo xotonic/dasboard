@@ -51,7 +51,8 @@
     }
     .celcium
     {
-
+        //font-family: RussoOne,Calibri;
+        font-size: 32px;
     }
     .celcium:after
         {
@@ -61,7 +62,11 @@
     * {
         font-family: sans-serif;
     }
-    
+    .currency
+    {
+        //font-family: RussoOne,Calibri;
+        font-size: 32px;
+    }
     .currency-delta-negative
     {
         color: red;

@@ -13,6 +13,10 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.Button.*;
 import com.xotonic.dashboard.currency.*;
 import com.xotonic.dashboard.weather.*;
+import java.math.RoundingMode;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -44,11 +48,25 @@ public class DashboardUI extends UI {
     public void updateDateLabel()
     {
         if (timeStatusValueLabel != null)
-        timeStatusValueLabel.setValue(Calendar.getInstance().getTime().toString());
+        timeStatusValueLabel.setValue(
+                new SimpleDateFormat("dd/MM/yyyy HH:mm:ss")
+                        .format( Calendar.getInstance().getTime()));
     }
     
+    DecimalFormat currencyFormat;
+    DecimalFormat currencyDeltaFormat;
+
+    DecimalFormat weatherFormat;
+
     @Override
     protected void init(VaadinRequest vaadinRequest) {
+        
+        currencyFormat = new DecimalFormat("#.####");
+        currencyFormat.setRoundingMode(RoundingMode.CEILING);
+        currencyDeltaFormat = new DecimalFormat("+#.####");
+        currencyDeltaFormat.setRoundingMode(RoundingMode.CEILING);
+        weatherFormat = new DecimalFormat("#.#");
+        weatherFormat.setRoundingMode(RoundingMode.CEILING);
         
         // Default city is Moscow
         //updateWeather(defaultCityId);
@@ -134,8 +152,13 @@ public class DashboardUI extends UI {
         currencyGridLayout.setSizeFull();
         currencyGridLayout.setRows(3);
         currencyGridLayout.setColumns(3);
-        currencyGridLayout.addComponent(new Label("USD"), 0, 1);
-        currencyGridLayout.addComponent(new Label("EUR"), 0, 2);
+        Label usd = new Label("USD");
+        Label eur = new Label("EUR");
+        usd.setStyleName("currency", true);
+        eur.setStyleName("currency", true);
+
+        currencyGridLayout.addComponent(usd, 0, 1);
+        currencyGridLayout.addComponent(eur, 0, 2);
         currencyGridLayout.addComponent(new Label("Курс"), 1, 0);
         currencyGridLayout.addComponent(new Label("Изменение"), 2, 0);
         
@@ -143,6 +166,11 @@ public class DashboardUI extends UI {
         final Label usdDeltaLabel = new Label("0");
         final Label eurLabel = new Label("0");
         final Label eurDeltaLabel = new Label("0");
+        usdLabel.setStyleName("currency", true);
+        usdDeltaLabel.setStyleName("currency", true);
+        eurLabel.setStyleName("currency", true);
+        eurDeltaLabel.setStyleName("currency", true);
+        
         
         currencyGridLayout.addComponent(usdLabel,  1, 1);
         currencyGridLayout.addComponent(eurLabel,  1, 2);
@@ -234,13 +262,11 @@ public class DashboardUI extends UI {
 
         @Override
         public void buttonClick(Button.ClickEvent event) {
-            //pbar.setVisible(true);
             String selectedCity = (String)placeSelect.getValue();
             int id = places.indexOf(selectedCity);
             updateWeather(id);
-            currentTemperature.setValue(Float.toString(weatherData.celcium_today));
-            tomorrowTemperature.setValue(Float.toString(weatherData.celcium_tomorrow));
-            //pbar.setVisible(false);
+            currentTemperature.setValue(weatherFormat.format(weatherData.celcium_today));
+            tomorrowTemperature.setValue(weatherFormat.format(weatherData.celcium_tomorrow));
             Notification.show("Погода обновлена",selectedCity, Notification.Type.HUMANIZED_MESSAGE );
             updateDateLabel();
 
@@ -270,13 +296,13 @@ public class DashboardUI extends UI {
         @Override
         public void buttonClick(Button.ClickEvent event) {
             updateCurrency();
-            usdLabel.setValue(Float.toString( currencyData.USD));
-            usdDeltaLabel.setValue(Float.toString(currencyData.USDDelta));
+            usdLabel.setValue(currencyFormat.format(currencyData.USD));
+            usdDeltaLabel.setValue(currencyDeltaFormat.format(currencyData.USDDelta));
             usdDeltaLabel.setStyleName( currencyData.USDDelta < 0 ?
                     "currency-delta-negative" : "currency-delta-positive", true);
             
-            eurLabel.setValue(Float.toString(currencyData.EUR));
-            eurDeltaLabel.setValue(Float.toString(currencyData.EURDelta));
+            eurLabel.setValue(currencyFormat.format(currencyData.EUR));
+            eurDeltaLabel.setValue(currencyDeltaFormat.format(currencyData.EURDelta));
             eurDeltaLabel.setStyleName( currencyData.EURDelta < 0 ?
                     "currency-delta-negative" : "currency-delta-positive", true);
             Notification.show("Валюта обновлена", Notification.Type.HUMANIZED_MESSAGE );
