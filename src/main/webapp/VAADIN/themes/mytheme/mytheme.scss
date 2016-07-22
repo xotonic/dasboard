@@ -1,6 +1,6 @@
 // Темная тема 
 
-$v-background-color: #444d50;
+$v-background-color: #161616;
 $v-focus-color: #07a9ca;
 $v-focus-style: 0 0 3px 2px $v-focus-color;
 $v-bevel-depth: 40%;
@@ -16,7 +16,6 @@ $v-textfield-shadow: $v-shadow;
 $v-unit-size: 40px;
 $v-overlay-shadow: 0 0 0 3px (v-shade 8), 0 5px 10px (v-shade 4);
 $v-component-group-spacing: 6px;
-
 @import "../valo/valo.scss";
 @include font(RussoOne,
 '../../../../mytheme/fonts/RussoOne-Regular');
@@ -37,7 +36,7 @@ $v-component-group-spacing: 6px;
     }
     .logo-label:hover
         {
-        color: red;
+        color: $v-focus-color;
     }
     .celcium
     {
@@ -49,9 +48,7 @@ $v-component-group-spacing: 6px;
         content:" \00b0 C"; 
     }
 
-    * {
-        font-family: sans-serif;
-    }
+    
     .currency
     {
         //font-family: RussoOne,Calibri;
@@ -64,5 +61,28 @@ $v-component-group-spacing: 6px;
     .currency-delta-positive
     {
         color: green;
+    }
+    .bg {
+        background-color: $v-background-color; // Old browsers
+        @include background-image(linear-gradient(top, #0185c6 0%,$v-background-color 3%,#003d5e 100%));
+    }
+    .frame-bg-weather
+    {
+        background-color: $v-background-color; // Old browsers
+        @include background-image(linear-gradient(top, $v-background-color 0%,#001f2b 100%));
+    }
+    .frame-bg-currency
+    {
+        background-color: $v-background-color; // Old browsers
+        @include background-image(linear-gradient(top, $v-background-color 0%,#001f2b 100%));
+    }
+    .frame-bg-visitors
+    {
+        background-color: $v-background-color; // Old browsers
+        @include background-image(linear-gradient(top, $v-background-color 0%,#001f2b 100%));
+    }
+    .v-panel-caption {
+        font-size: 24px;
+        font-weight: bolder;
     }
 }

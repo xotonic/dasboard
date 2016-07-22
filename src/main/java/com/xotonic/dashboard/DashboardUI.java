@@ -92,6 +92,7 @@ public class DashboardUI extends UI {
         
         VerticalLayout vlayout = new VerticalLayout();
         vlayout.addStyleName("outlined");
+        vlayout.addStyleName("bg");
         vlayout.setSizeFull();
         vlayout.setMargin(true);
         HorizontalLayout hlayout = new HorizontalLayout();
@@ -119,6 +120,7 @@ public class DashboardUI extends UI {
          WEATHER
         */
         final Panel weatherPanel =  new Panel("Погода");
+        weatherPanel.addStyleName("frame-bg-weather");
         weatherPanel.setSizeFull();
         
         final ArrayList<String> places = new ArrayList<>(); 
@@ -166,6 +168,8 @@ public class DashboardUI extends UI {
         */
         
         Panel currencyPanel =  new Panel("Валюта");
+        currencyPanel.addStyleName("frame-bg-currency");
+
         currencyPanel.setSizeFull();
         GridLayout currencyGridLayout = new GridLayout();
         currencyGridLayout.setSizeFull();
@@ -213,6 +217,7 @@ public class DashboardUI extends UI {
          VISITORS
         */
         Panel visitorsPanel =  new Panel("Счетчик посещений");
+        visitorsPanel.addStyleName("frame-bg-visitors");
         Label ipUniqueLabel = new Label("0");
         ipUniqueLabel.setCaption("Уникальных");
         ipUniqueLabel.setSizeUndefined();
@@ -224,7 +229,7 @@ public class DashboardUI extends UI {
         ipTotalLabel.setStyleName("visitors-counter-label", true);
         
         visitorsPanel.setSizeFull();
-        VerticalLayout visitorsMainLayout = new VerticalLayout(ipUniqueLabel,ipTotalLabel);
+        HorizontalLayout visitorsMainLayout = new HorizontalLayout(ipUniqueLabel,ipTotalLabel);
         visitorsMainLayout.setSizeFull();
         visitorsMainLayout.setComponentAlignment(ipUniqueLabel, Alignment.MIDDLE_CENTER);
         visitorsMainLayout.setComponentAlignment(ipTotalLabel, Alignment.MIDDLE_CENTER);
