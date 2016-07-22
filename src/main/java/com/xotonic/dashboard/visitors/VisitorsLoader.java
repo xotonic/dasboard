@@ -5,11 +5,13 @@
  */
 package com.xotonic.dashboard.visitors;
 
+import com.xotonic.dashboard.ExceptionForUser;
+
 /**
  *
  * @author xotonic
  */
 public interface VisitorsLoader {
-    public VisitorsData getData();
-    public void registerIP(String ip);
+    public VisitorsData getData() throws ExceptionForUser;
+    public void registerIP(String ip) throws ExceptionForUser ;
 }

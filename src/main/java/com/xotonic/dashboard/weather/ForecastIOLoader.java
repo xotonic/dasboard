@@ -1,6 +1,7 @@
 package com.xotonic.dashboard.weather;
 
 import com.github.dvdme.ForecastIOLib.*;
+import com.xotonic.dashboard.ExceptionForUser;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -33,7 +34,7 @@ public class ForecastIOLoader implements WeatherLoader {
     };
     
     @Override
-    public WeatherData getData(Cities city) {
+    public WeatherData getData(Cities city) throws ExceptionForUser {
         WeatherData data = new WeatherData();
         data.city = city;
         data.celcium_tomorrow = -1;
@@ -45,9 +46,18 @@ public class ForecastIOLoader implements WeatherLoader {
         fio.setUnits(ForecastIO.UNITS_SI);
         fio.setLang(ForecastIO.LANG_ENGLISH);
         fio.getForecast(lat, lon);
+        /*
+            При неудачной попыткой соединения с сервером 
+            библиотека кидает NullPointerException
+        */
+        try {
         System.out.println("Latitude: " + fio.getLatitude());
         System.out.println("Longitude: " + fio.getLongitude());
         System.out.println("Timezone: " + fio.getTimezone());
+        } catch (NullPointerException e)
+        {
+            throw new ExceptionForUser("Ошибка подключения к серверу погоды");
+        }
         //System.out.println("Offset: " + fio.getOffset());
 
         FIOCurrently currently = new FIOCurrently(fio);

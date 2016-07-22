@@ -1,11 +1,16 @@
 package com.xotonic.dashboard.visitors;
 
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientOptions;
+import com.mongodb.MongoSocketOpenException;
+import com.mongodb.MongoTimeoutException;
+import com.mongodb.ServerAddress;
 
 import com.mongodb.client.*;
 import com.mongodb.client.model.UpdateOptions;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Updates.inc;
+import com.xotonic.dashboard.ExceptionForUser;
 import org.bson.*;
 
 import static java.util.Arrays.asList;
@@ -15,55 +20,78 @@ import static java.util.Arrays.asList;
  * Порт, адрес, и БД сервера дефолтные <br>
  * Собсно, требуется рабочий mongod <br>
  * Используется 3я версия драйвера
- * <p>Формат документа<br>
+ * <p>
+ * Формат документа<br>
  * <code>{ ip : string, count : integer}</code>
  * </p>
+ *
  * @author xotonic
  */
 public class MongoVisitorsLoader implements VisitorsLoader {
 
     String MongoDBServerAddress = "localhost";
-    int MongoDBServerPort = 27017;
     String dbName = "test";
+    int MongoDBServerPort = 27017;
+
+    private MongoCollection connect() throws ExceptionForUser {
+        System.out.println("CONNECTING TO MONGO SERVER");
+        try {
+            MongoClientOptions opts = MongoClientOptions
+                    .builder()
+                    .socketTimeout(5000)
+                    .connectTimeout(3000)
+                    .maxWaitTime(3000)
+                    .build();
+            ServerAddress addr = new ServerAddress(MongoDBServerAddress, MongoDBServerPort);
+            MongoCollection collection
+                    = new MongoClient(addr, opts)
+                    .getDatabase(dbName)
+                    .getCollection("visitors");
+            System.out.println("CONNECTED SUCCESSFULLY");
+
+            return collection;
+        } catch (MongoTimeoutException e) {
+            throw new ExceptionForUser("Не удалось подключиться к серверу БД");
+        }
+    }
 
     @Override
-    public VisitorsData getData() {
+    public VisitorsData getData() throws ExceptionForUser {
         VisitorsData data = new VisitorsData();
         data.total = -1;
         data.unique = -1;
-
         MongoCollection collection
-                = new MongoClient(MongoDBServerAddress, MongoDBServerPort)
-                .getDatabase(dbName)
-                .getCollection("visitors");
+                = connect();
+        System.out.println("AGRREGATING");
 
         AggregateIterable<Document> sum = collection.aggregate(asList(
-                new Document("$group", 
-                            new Document("_id", null)
-                            .append("total",
+                new Document("$group",
+                        new Document("_id", null)
+                        .append("total",
                                 new Document("$sum", "$count"))
-                            .append("unique",
+                        .append("unique",
                                 new Document("$sum", 1)))));
-        if (sum.first() != null)
-        {
-        data.total = sum.first().getInteger("total");
-        data.unique = sum.first().getInteger("unique");
+        if (sum.first() != null) {
+            data.total = sum.first().getInteger("total");
+            data.unique = sum.first().getInteger("unique");
         }
-
 
         return data;
     }
 
     @Override
-    public void registerIP(String ip) {
-        MongoCollection col
-                = new MongoClient(MongoDBServerAddress, MongoDBServerPort)
-                .getDatabase(dbName)
-                .getCollection("visitors");
-        col.updateOne(
-                eq("ip", ip),
-                inc("count", 1),
-                new UpdateOptions().upsert(true));
+    public void registerIP(String ip) throws ExceptionForUser {
+        try {
+            MongoCollection col = connect();
+            System.out.println("UPDATING IP COLLECTION");
+
+            col.updateOne(
+                    eq("ip", ip),
+                    inc("count", 1),
+                    new UpdateOptions().upsert(true));
+        } catch (MongoTimeoutException e) {
+            throw new ExceptionForUser("Не удалось подключиться к серверу БД");
+        }
     }
 
 }

@@ -1,9 +1,11 @@
 package com.xotonic.dashboard.currency;
 
+import com.xotonic.dashboard.ExceptionForUser;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.math.RoundingMode;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -51,7 +53,7 @@ public class CBRLoader implements CurrencyLoader {
     }
 
     @Override
-    public CurrencyData getData() {
+    public CurrencyData getData() throws ExceptionForUser {
         CurrencyData cd = new CurrencyData();
         cd.USD = Float.NaN;
         cd.EUR = Float.NaN;
@@ -113,13 +115,16 @@ public class CBRLoader implements CurrencyLoader {
 
         } catch (ParserConfigurationException | SAXException | IOException ex) {
             Logger.getLogger(CBRLoader.class.getName()).log(Level.SEVERE, null, ex);
-            /*      
+            /*    
+            
             } catch (TransformerConfigurationException ex) {
             Logger.getLogger(CBRLoader.class.getName()).log(Level.SEVERE, null, ex);
         } catch (TransformerException ex) {
             Logger.getLogger(CBRLoader.class.getName()).log(Level.SEVERE, null, ex);
         }
             */
+            throw new ExceptionForUser("Ошибка запроса валюты " + ex.getMessage());
+
         }
         
         /*
@@ -148,8 +153,9 @@ public class CBRLoader implements CurrencyLoader {
 
         } catch (ParserConfigurationException | SAXException | IOException ex) {
             Logger.getLogger(CBRLoader.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ExceptionForUser("Ошибка запроса валюты "+ex.getMessage());
         }
-        
+                
        
         
         return cd;
