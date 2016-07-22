@@ -44,11 +44,10 @@ $v-component-group-spacing: 6px;
         font-size: 32px;
     }
     .celcium:after
-        {
+    {
         content:" \00b0 C"; 
     }
 
-    
     .currency
     {
         //font-family: RussoOne,Calibri;
@@ -58,10 +57,19 @@ $v-component-group-spacing: 6px;
     {
         color: red;
     }
+    .currency-delta-negative:before
+    {
+        content:"\1F873  "; 
+    }
     .currency-delta-positive
     {
         color: green;
     }
+    .currency-delta-positive:before
+    {
+        content:"\1F872  "; 
+    }
+    
     .bg {
         background-color: $v-background-color; // Old browsers
         @include background-image(linear-gradient(top, #0185c6 0%,$v-background-color 3%,#003d5e 100%));
@@ -82,7 +90,7 @@ $v-component-group-spacing: 6px;
         @include background-image(linear-gradient(top, $v-background-color 0%,#001f2b 100%));
     }
     .v-panel-caption {
-        font-size: 24px;
+        font-size: 18px;
         font-weight: bolder;
     }
 }

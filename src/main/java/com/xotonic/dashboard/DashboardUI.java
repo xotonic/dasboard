@@ -85,7 +85,7 @@ public class DashboardUI extends UI {
         
         currencyFormat = new DecimalFormat("#.####");
         currencyFormat.setRoundingMode(RoundingMode.CEILING);
-        currencyDeltaFormat = new DecimalFormat("+#.####;-#.####");
+        currencyDeltaFormat = new DecimalFormat("+#.###;-#.###");
         currencyDeltaFormat.setRoundingMode(RoundingMode.CEILING);
         weatherFormat = new DecimalFormat("#.#");
         weatherFormat.setRoundingMode(RoundingMode.CEILING);
@@ -119,7 +119,7 @@ public class DashboardUI extends UI {
         /*
          WEATHER
         */
-        final Panel weatherPanel =  new Panel("Погода");
+        final Panel weatherPanel =  new Panel("<center>Погода</center>");
         weatherPanel.addStyleName("frame-bg-weather");
         weatherPanel.setSizeFull();
         
@@ -150,16 +150,13 @@ public class DashboardUI extends UI {
         tomorrowTemperature.setStyleName("celcium", true);
 
         FormLayout weatherFormLayout = new FormLayout(placeSelect, currentTemperature, tomorrowTemperature);
-        Button updateWeatherButton = new Button("Обновить");
+        Button updateWeatherButton = new Button("\u27F3 Обновить");
         UpdateWeatherLisnener updateWeatherListener =  new UpdateWeatherLisnener(placeSelect, places, currentTemperature, tomorrowTemperature);
         updateWeatherButton.addClickListener(updateWeatherListener);
         
         VerticalLayout weatherMainLayout = new VerticalLayout(weatherFormLayout);
         weatherMainLayout.setSizeFull();
         weatherMainLayout.setMargin(true);
-        //weatherMainLayout.addComponent(pbar);
-        //weatherMainLayout.setComponentAlignment(pbar, Alignment.BOTTOM_CENTER);
-        //pbar.setVisible(false);
         weatherMainLayout.addComponent(updateWeatherButton);
         weatherMainLayout.setComponentAlignment(updateWeatherButton, Alignment.BOTTOM_CENTER);
         weatherPanel.setContent(weatherMainLayout);
@@ -167,7 +164,7 @@ public class DashboardUI extends UI {
          CURRENCY
         */
         
-        Panel currencyPanel =  new Panel("Валюта");
+        Panel currencyPanel =  new Panel("<center>Валюта</center>");
         currencyPanel.addStyleName("frame-bg-currency");
 
         currencyPanel.setSizeFull();
@@ -175,8 +172,8 @@ public class DashboardUI extends UI {
         currencyGridLayout.setSizeFull();
         currencyGridLayout.setRows(3);
         currencyGridLayout.setColumns(3);
-        Label usd = new Label("USD");
-        Label eur = new Label("EUR");
+        Label usd = new Label("$ USD");
+        Label eur = new Label("\u20AC EUR");
         usd.setStyleName("currency", true);
         eur.setStyleName("currency", true);
 
@@ -205,7 +202,7 @@ public class DashboardUI extends UI {
         mainCurrencyLayout.setSizeFull();
         mainCurrencyLayout.setMargin(true);
         mainCurrencyLayout.setSpacing(true);
-        Button updateCurrencyButton = new Button("Обновить");
+        Button updateCurrencyButton = new Button("\u27F3 Обновить");
         mainCurrencyLayout.addComponent(updateCurrencyButton);
         mainCurrencyLayout.setComponentAlignment(updateCurrencyButton, Alignment.BOTTOM_CENTER);
         currencyPanel.setContent(mainCurrencyLayout);
@@ -216,7 +213,7 @@ public class DashboardUI extends UI {
         /*
          VISITORS
         */
-        Panel visitorsPanel =  new Panel("Счетчик посещений");
+        Panel visitorsPanel =  new Panel("<center>Счетчик посещений</center>");
         visitorsPanel.addStyleName("frame-bg-visitors");
         Label ipUniqueLabel = new Label("0");
         ipUniqueLabel.setCaption("Уникальных");
@@ -244,7 +241,7 @@ public class DashboardUI extends UI {
          /*
          FOOTER
         */
-        timeStatusValueLabel = new Label("Начало войны");
+        timeStatusValueLabel = new Label("---");
         timeStatusValueLabel.setCaption("Информация по состоянию на");
         
         
