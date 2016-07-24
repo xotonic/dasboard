@@ -1,38 +1,33 @@
-dashboard
-==============
+DASHBOARD
+=========
+ОПИСАНИЕ
+--------
+Webapp для Tomcat 8. 
 
-Template for a simple Vaadin application that only requires a Servlet 3.0 container to run.
+Показывает информацию о 
+- текущей погоде в 3-ч городах 
+(Новосибирск, Москва, Санкт-Петербург)
+на сегодня и на завтра
+- Курс доллара и евро и его изменение
+- Число уникальных посетителей и общее загрузок страницы
 
+СКРИНШОТ
+--------
 
-Workflow
-========
+![](screenshot.png)
 
-To compile the entire project, run "mvn install".
-To run the application, run "mvn jetty:run" and open http://localhost:8080/ .
+ПОДРОБНОСТИ
+-----------
 
-To develop the theme, simply update the relevant theme files and reload the application.
-Pre-compiling a theme eliminates automatic theme updates at runtime - see below for more information.
+Используется фреймворк Vaadin, реализующий клиент-серверное взаимодействие
+и формирование веб-интерфейса
 
-Debugging client side code
-  - run "mvn vaadin:run-codeserver" on a separate console while the application is running
-  - activate Super Dev Mode in the debug window of the application
+Для хранения IP адресов посетителей используется NoSQL БД MongoDB
 
-To produce a deployable production mode WAR:
-- change productionMode to true in the servlet class configuration (nested in the UI class)
-- run "mvn clean vaadin:compile-theme package"
-  - See below for more information. Running "mvn clean" removes the pre-compiled theme.
-- test with "mvn jetty:run-war
+Информеры:
+- forecast.io (погода)
+- [Центробанк России] (cbr.ru) (валюта)
 
-Using a precompiled theme
--------------------------
+Путь : `http://localhost:8080/dashboard/`
 
-When developing the application, Vaadin can compile the theme on the fly when needed,
-or the theme can be precompiled to speed up page loads.
-
-To precompile the theme run "mvn vaadin:compile-theme". Note, though, that once
-the theme has been precompiled, any theme changes will not be visible until the
-next theme compilation or running the "mvn clean" target.
-
-When developing the theme, running the application in the "run" mode (rather than
-in "debug") in the IDE can speed up consecutive on-the-fly theme compilations
-significantly.
+Порт MongoDB по-умолчанию.
