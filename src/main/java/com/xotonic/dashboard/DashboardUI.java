@@ -4,22 +4,10 @@ import com.vaadin.annotations.Push;
 import javax.servlet.annotation.WebServlet;
 
 import com.vaadin.annotations.*;
-import com.vaadin.server.Page;
-import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinServlet;
-import com.vaadin.server.WebBrowser;
+import com.vaadin.server.*;
 import com.vaadin.shared.ui.combobox.FilteringMode;
 import com.vaadin.ui.*;
-import com.vaadin.ui.Button.*;
-import com.xotonic.dashboard.currency.*;
-import com.xotonic.dashboard.visitors.*;
-import com.xotonic.dashboard.weather.*;
-import java.math.RoundingMode;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 /**
  * Отрисовка UI и управление событиями
@@ -29,87 +17,14 @@ import java.util.Calendar;
 @Push // Аддон для управлением UI из другого потока
 public class DashboardUI extends UI {
 
-    /*
-        Основная информация, реализация скрыта
-        Просто получаем ее через интерфейсы
-     */
-    // Погода
-    public WeatherData weatherData = new WeatherData();
-    // Курсы валют
-    public CurrencyData currencyData = new CurrencyData();
-    // Посещения
-    public VisitorsData visitorsData = new VisitorsData();
-
-    // Получение этой информации
-    public final int defaultCityId = Cities.NSK.ordinal() - 1;
-
-    public void updateWeather(int id) {
-        WeatherLoader loader = new ForecastIOLoader();
-        try {
-        weatherData = loader.getData(Cities.values()[id]);
-        } 
-        catch (ExceptionForUser e)
-        {
-            Notification.show(e.what(), Notification.Type.ERROR_MESSAGE);
-        }
-    }
-
-    public void updateCurrency() {
-        CurrencyLoader loader = new CBRLoader();
-        try {
-        currencyData = loader.getData();
-        } 
-        catch (ExceptionForUser e)
-        {
-            Notification.show(e.what(), Notification.Type.ERROR_MESSAGE);
-        }
-    }
-
-    public void updateVisitors() {
-        VisitorsLoader loader = new MongoVisitorsLoader();
-        try {
-        visitorsData = loader.getData();
-        } 
-        catch (ExceptionForUser e)
-        {
-            Notification.show(e.what(), Notification.Type.ERROR_MESSAGE);
-        }
-    }
-
-    public void upsertAddress(String ip) {
-        try {
-        new MongoVisitorsLoader().registerIP(ip);
-        } 
-        catch (ExceptionForUser e)
-        {
-            Notification.show(e.what(), Notification.Type.ERROR_MESSAGE);
-        }
-    }
-    private Label timeStatusValueLabel;
-
-    public void updateDateLabel() {
-        if (timeStatusValueLabel != null) {
-            timeStatusValueLabel.setValue(
-                    new SimpleDateFormat("dd/MM/yyyy HH:mm:ss")
-                    .format(Calendar.getInstance().getTime()));
-        }
-    }
-
-    // Форматирование для разлиных величин
-    DecimalFormat currencyFormat;
-    DecimalFormat currencyDeltaFormat;
-
-    DecimalFormat weatherFormat;
-
+    
+    WeatherUpdater weatherUpdater;
+    CurrencyUpdater currencyUpdater;
+    VisitorsUpdater visitorsUpdater;
+   
+    
     @Override
     protected void init(VaadinRequest vaadinRequest) {
-
-        currencyFormat = new DecimalFormat("#.####");
-        currencyFormat.setRoundingMode(RoundingMode.CEILING);
-        currencyDeltaFormat = new DecimalFormat("+#.###;-#.###");
-        currencyDeltaFormat.setRoundingMode(RoundingMode.CEILING);
-        weatherFormat = new DecimalFormat("#.#");
-        weatherFormat.setRoundingMode(RoundingMode.CEILING);
 
         VerticalLayout vlayout = new VerticalLayout();
         vlayout.addStyleName("outlined");
@@ -145,7 +60,6 @@ public class DashboardUI extends UI {
 
         final ComboBox placeSelect = new ComboBox("Местоположение", places);
 
-        placeSelect.select(defaultCityId);
         placeSelect.setWidth(100.0f, Unit.PERCENTAGE);
 
         placeSelect.setFilteringMode(FilteringMode.CONTAINS);
@@ -153,7 +67,6 @@ public class DashboardUI extends UI {
 
         // Отключаем пустой выбор
         placeSelect.setNullSelectionAllowed(false);
-        placeSelect.setValue(places.get(defaultCityId));
         final Label currentTemperature = new Label("-");
         currentTemperature.setStyleName("celcium", true);
         currentTemperature.setCaption("Температура текущая");
@@ -164,8 +77,6 @@ public class DashboardUI extends UI {
 
         FormLayout weatherFormLayout = new FormLayout(placeSelect, currentTemperature, tomorrowTemperature);
         Button updateWeatherButton = new Button("\u27F3 Обновить");
-        UpdateWeatherListener updateWeatherListener = new UpdateWeatherListener(placeSelect, places, currentTemperature, tomorrowTemperature);
-        updateWeatherButton.addClickListener(updateWeatherListener);
 
         VerticalLayout weatherMainLayout = new VerticalLayout(weatherFormLayout);
         weatherMainLayout.setSizeFull();
@@ -218,8 +129,6 @@ public class DashboardUI extends UI {
         mainCurrencyLayout.setComponentAlignment(updateCurrencyButton, Alignment.BOTTOM_CENTER);
         currencyPanel.setContent(mainCurrencyLayout);
 
-        UpdateCurrencyListener updateCurrencyListener = new UpdateCurrencyListener(usdLabel, usdDeltaLabel, eurLabel, eurDeltaLabel);
-        updateCurrencyButton.addClickListener(updateCurrencyListener);
 
         /*
          VISITORS
@@ -248,7 +157,6 @@ public class DashboardUI extends UI {
         hlayout.addComponent(currencyPanel);
         hlayout.addComponent(visitorsPanel);
 
-        UpdateVisitorsListener updateVisitorsListener = new UpdateVisitorsListener(ipUniqueLabel, ipTotalLabel);
         /*
          FOOTER
          */
@@ -258,7 +166,7 @@ public class DashboardUI extends UI {
          (Visitors, Currency, Weather)
         */
         
-        timeStatusValueLabel = new Label("---");
+        Label timeStatusValueLabel = new Label("---");
         timeStatusValueLabel.setCaption("Информация по состоянию на");
 
         // Получаем IP и выводим
@@ -282,146 +190,30 @@ public class DashboardUI extends UI {
 
         vlayout.addComponent(infoHLayout);
         vlayout.setExpandRatio(infoHLayout, 0.1f);
-        this.access(updateWeatherListener);
-        this.access(updateCurrencyListener);
-        this.access(updateVisitorsListener);
+        
+        /*
+            INITIALIZING UPDATERS
+        */
+        
+        weatherUpdater = new WeatherUpdater(placeSelect, places, currentTemperature, tomorrowTemperature, timeStatusValueLabel);
+        currencyUpdater = new CurrencyUpdater(usdLabel, usdDeltaLabel, eurLabel, eurDeltaLabel, timeStatusValueLabel);
+        visitorsUpdater = new VisitorsUpdater(ipUniqueLabel, ipTotalLabel);
+        
+        updateWeatherButton.addClickListener(weatherUpdater);
+        updateCurrencyButton.addClickListener(currencyUpdater);
+
+        // Обновление данных происходит в отдельных потоках, чтобы у клиента не
+        // задерживалась отрисовка интерфейса
+        // Для обновления UI из отдельного потока понадобился thirdparty addon
+        // vaadin-push
+        this.access(weatherUpdater);
+        this.access(currencyUpdater);
+        this.access(visitorsUpdater);
     }
 
     @WebServlet(urlPatterns = "/*", name = "DashboardUIServlet", asyncSupported = true)
     @VaadinServletConfiguration(ui = DashboardUI.class, productionMode = false)
     public static class DashboardUIServlet extends VaadinServlet {
     }
-
-    private class UpdateWeatherListener implements ClickListener, Runnable {
-
-        private final ComboBox placeSelect;
-        private final ArrayList<String> places;
-        private final Label currentTemperature;
-        private final Label tomorrowTemperature;
-        private boolean silent;
-
-        public UpdateWeatherListener(ComboBox placeSelect, ArrayList<String> places, Label currentTemperature, Label tomorrowTemperature) {
-            this.placeSelect = placeSelect;
-            this.places = places;
-            this.currentTemperature = currentTemperature;
-            this.tomorrowTemperature = tomorrowTemperature;
-            this.silent = true;
-        }
-
-        @Override
-        public void buttonClick(Button.ClickEvent event) {
-            String selectedCity = (String) placeSelect.getValue();
-            int id = places.indexOf(selectedCity);
-            updateWeather(id);
-            currentTemperature.setValue(weatherFormat.format(weatherData.celcium_today));
-            tomorrowTemperature.setValue(weatherFormat.format(weatherData.celcium_tomorrow));
-            if (silent == false) {
-                Notification.show("Погода обновлена", selectedCity, Notification.Type.HUMANIZED_MESSAGE);
-            }
-            updateDateLabel();
-
-        }
-
-        @Override
-        public void run() {
-            buttonClick(null);
-        }
-
-        /**
-         * @return the silent
-         */
-        public boolean isSilent() {
-            return silent;
-        }
-
-        /**
-         * @param silent the silent to set
-         */
-        public void setSilent(boolean silent) {
-            this.silent = silent;
-        }
-    }
-
-    private class UpdateCurrencyListener implements ClickListener, Runnable {
-
-        private final Label usdLabel;
-        private final Label usdDeltaLabel;
-        private final Label eurLabel;
-        private final Label eurDeltaLabel;
-        private boolean silent;
-
-        public UpdateCurrencyListener(
-                Label usdLabel,
-                Label usdDeltaLabel,
-                Label eurLabel,
-                Label eurDeltaLabel) {
-            this.usdLabel = usdLabel;
-            this.usdDeltaLabel = usdDeltaLabel;
-            this.eurLabel = eurLabel;
-            this.eurDeltaLabel = eurDeltaLabel;
-            this.silent = true;
-        }
-
-        @Override
-        public void buttonClick(Button.ClickEvent event) {
-            updateCurrency();
-            usdLabel.setValue(currencyFormat.format(currencyData.USD));
-            usdDeltaLabel.setValue(currencyDeltaFormat.format(currencyData.USDDelta));
-            usdDeltaLabel.setStyleName(currencyData.USDDelta < 0
-                    ? "currency-delta-negative" : "currency-delta-positive", true);
-
-            eurLabel.setValue(currencyFormat.format(currencyData.EUR));
-            eurDeltaLabel.setValue(currencyDeltaFormat.format(currencyData.EURDelta));
-            eurDeltaLabel.setStyleName(currencyData.EURDelta < 0
-                    ? "currency-delta-negative" : "currency-delta-positive", true);
-            if (silent == false) {
-                Notification.show("Валюта обновлена", Notification.Type.HUMANIZED_MESSAGE);
-            }
-            updateDateLabel();
-        }
-
-        @Override
-        public void run() {
-            buttonClick(null);
-        }
-
-        /**
-         * @return the silent
-         */
-        public boolean isSilent() {
-            return silent;
-        }
-
-        /**
-         * @param silent the silent to set
-         */
-        public void setSilent(boolean silent) {
-            this.silent = silent;
-        }
-    }
-
-    private class UpdateVisitorsListener implements ClickListener, Runnable {
-
-        private final Label uniqueLabel;
-        private final Label totalLabel;
-
-        public UpdateVisitorsListener(Label uniqueLabel, Label totalLabel) {
-            this.uniqueLabel = uniqueLabel;
-            this.totalLabel = totalLabel;
-        }
-
-        @Override
-        public void buttonClick(ClickEvent event) {
-            final WebBrowser webBrowser = Page.getCurrent().getWebBrowser();
-            upsertAddress(webBrowser.getAddress());
-            updateVisitors();
-            uniqueLabel.setValue(Integer.toString(visitorsData.unique));
-            totalLabel.setValue(Integer.toString(visitorsData.total));
-        }
-
-        @Override
-        public void run() {
-            buttonClick(null);
-        }
-    }
+    
 }
