@@ -7,12 +7,12 @@ import com.xotonic.dashboard.ExceptionForUser;
  * Интерфейс для взаимодействия с {@link DashboardUI}
  * @author xotonic
  */
-public interface WeatherLoader {
+public interface WeatherDataService {
     
     /**
      * @param city Запрашиваемый город
      * @return Информация по этому городу
      * @throws com.xotonic.dashboard.ExceptionForUser
      */
-    public WeatherData getData(Cities city) throws ExceptionForUser;
+    WeatherData getData(Cities city) throws ExceptionForUser;
 }

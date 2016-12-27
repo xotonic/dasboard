@@ -2,11 +2,7 @@ package com.xotonic.dashboard.currency;
 
 import com.xotonic.dashboard.ExceptionForUser;
 import java.io.IOException;
-import java.io.StringWriter;
-import java.math.RoundingMode;
 import java.net.URL;
-import java.net.UnknownHostException;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -15,16 +11,9 @@ import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
-import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 /**
@@ -32,7 +21,7 @@ import org.xml.sax.SAXException;
  *
  * @author xotonic
  */
-public class CBRLoader implements CurrencyLoader {
+public class CBRDataService implements CurrencyDataService {
 
     private final String ID_USD = "R01235";
     private final String ID_EUR = "R01239";
@@ -114,13 +103,13 @@ public class CBRLoader implements CurrencyLoader {
             cd.USDDelta = cur - curLast;
 
         } catch (ParserConfigurationException | SAXException | IOException ex) {
-            Logger.getLogger(CBRLoader.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CBRDataService.class.getName()).log(Level.SEVERE, null, ex);
             /*    
             
             } catch (TransformerConfigurationException ex) {
-            Logger.getLogger(CBRLoader.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CBRDataService.class.getName()).log(Level.SEVERE, null, ex);
         } catch (TransformerException ex) {
-            Logger.getLogger(CBRLoader.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CBRDataService.class.getName()).log(Level.SEVERE, null, ex);
         }
             */
             throw new ExceptionForUser("Ошибка запроса валюты " + ex.getMessage());
@@ -152,7 +141,7 @@ public class CBRLoader implements CurrencyLoader {
             cd.EURDelta = cur - curLast;
 
         } catch (ParserConfigurationException | SAXException | IOException ex) {
-            Logger.getLogger(CBRLoader.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CBRDataService.class.getName()).log(Level.SEVERE, null, ex);
             throw new ExceptionForUser("Ошибка запроса валюты "+ex.getMessage());
         }
                 

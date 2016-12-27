@@ -2,7 +2,6 @@ package com.xotonic.dashboard.visitors;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
-import com.mongodb.MongoSocketOpenException;
 import com.mongodb.MongoTimeoutException;
 import com.mongodb.ServerAddress;
 
@@ -27,7 +26,7 @@ import static java.util.Arrays.asList;
  *
  * @author xotonic
  */
-public class MongoVisitorsLoader implements VisitorsLoader {
+public class MongoVisitorsDataService implements VisitorsDataService {
 
     String MongoDBServerAddress = "localhost";
     String dbName = "test";

@@ -1,7 +1,8 @@
 
-package com.xotonic.dashboard;
+package com.xotonic.dashboard.ui;
 
 import com.vaadin.ui.*;
+import com.xotonic.dashboard.ExceptionForUser;
 import com.xotonic.dashboard.weather.*;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -75,7 +76,7 @@ public class WeatherUpdater implements Button.ClickListener, Runnable {
     }
 
     private void updateWeather(int id) {
-        WeatherLoader loader = new ForecastIOLoader();
+        WeatherDataService loader = new FIODataService();
         try {
             weatherData = loader.getData(Cities.values()[id]);
         } catch (ExceptionForUser e) {

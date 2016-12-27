@@ -1,4 +1,4 @@
-package com.xotonic.dashboard;
+package com.xotonic.dashboard.ui;
 
 import com.vaadin.annotations.Push;
 import javax.servlet.annotation.WebServlet;
@@ -25,7 +25,6 @@ public class DashboardUI extends UI {
     
     @Override
     protected void init(VaadinRequest vaadinRequest) {
-
         VerticalLayout vlayout = new VerticalLayout();
         vlayout.addStyleName("outlined");
         vlayout.addStyleName("bg");

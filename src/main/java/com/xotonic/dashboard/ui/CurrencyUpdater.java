@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.xotonic.dashboard;
+package com.xotonic.dashboard.ui;
 
 import com.vaadin.ui.*;
+import com.xotonic.dashboard.ExceptionForUser;
 import com.xotonic.dashboard.currency.*;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -60,7 +61,7 @@ public class CurrencyUpdater implements Button.ClickListener, Runnable {
     }
 
     private void updateCurrency() {
-        CurrencyLoader loader = new CBRLoader();
+        CurrencyDataService loader = new CBRDataService();
         try {
             currencyData = loader.getData();
         } catch (ExceptionForUser e) {

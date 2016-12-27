@@ -1,13 +1,14 @@
-package com.xotonic.dashboard;
+package com.xotonic.dashboard.ui;
 
 import com.vaadin.server.Page;
 import com.vaadin.server.WebBrowser;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
-import com.xotonic.dashboard.visitors.MongoVisitorsLoader;
+import com.xotonic.dashboard.ExceptionForUser;
+import com.xotonic.dashboard.visitors.MongoVisitorsDataService;
 import com.xotonic.dashboard.visitors.VisitorsData;
-import com.xotonic.dashboard.visitors.VisitorsLoader;
+import com.xotonic.dashboard.visitors.VisitorsDataService;
 
 /**
  * Обновление счетчика посещения<br>
@@ -42,7 +43,7 @@ public class VisitorsUpdater implements Button.ClickListener, Runnable {
     }
 
     private void updateVisitors() {
-        VisitorsLoader loader = new MongoVisitorsLoader();
+        VisitorsDataService loader = new MongoVisitorsDataService();
         try {
             visitorsData = loader.getData();
         } catch (ExceptionForUser e) {
@@ -52,7 +53,7 @@ public class VisitorsUpdater implements Button.ClickListener, Runnable {
 
     private void upsertAddress(String ip) {
         try {
-            new MongoVisitorsLoader().registerIP(ip);
+            new MongoVisitorsDataService().registerIP(ip);
         } catch (ExceptionForUser e) {
             Notification.show(e.what(), Notification.Type.ERROR_MESSAGE);
         }

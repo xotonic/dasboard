@@ -7,6 +7,6 @@ import com.xotonic.dashboard.ExceptionForUser;
  *
  * @author xotonic
  */
-public interface CurrencyLoader {
+public interface CurrencyDataService {
     public CurrencyData getData() throws ExceptionForUser ;
 }

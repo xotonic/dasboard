@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.github.dvdme:ForecastIOLib:1.5.1">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/dvdme/ForecastIOLib/1.5.1/ForecastIOLib-1.5.1.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/dvdme/ForecastIOLib/1.5.1/ForecastIOLib-1.5.1-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/dvdme/ForecastIOLib/1.5.1/ForecastIOLib-1.5.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

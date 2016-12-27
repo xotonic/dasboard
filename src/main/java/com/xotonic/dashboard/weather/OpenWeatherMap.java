@@ -13,10 +13,10 @@ import org.json.JSONException;
 *    Загрузчик погоды с openweathermap.com.<br>
 *    <b>Баг:</b> Загружает одинаковый прогноз для всех городов
 *    @author xotonic
-*    @deprecated используйте {@link ForecastIO}. 
+*    @deprecated используйте {@link FIODataService}.
 */
 @Deprecated
-public class OpenWeatherMap implements WeatherLoader {
+public class OpenWeatherMap implements WeatherDataService {
 
     /*
         Разработчики рекомендуют использовать в запросах ID городов вместо названий

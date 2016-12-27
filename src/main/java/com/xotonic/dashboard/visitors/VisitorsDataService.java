@@ -11,7 +11,7 @@ import com.xotonic.dashboard.ExceptionForUser;
  *
  * @author xotonic
  */
-public interface VisitorsLoader {
-    public VisitorsData getData() throws ExceptionForUser;
-    public void registerIP(String ip) throws ExceptionForUser ;
+public interface VisitorsDataService {
+    VisitorsData getData() throws ExceptionForUser;
+    void registerIP(String ip) throws ExceptionForUser ;
 }

@@ -3,7 +3,7 @@ package com.xotonic.dashboard.weather;
 
 /**
  * Класс для передачи информации от загрузчиков погодных информеров
- * ({@link WeatherLoader}) 
+ * ({@link WeatherDataService})
  * @author xotonic
  */
 public class WeatherData {

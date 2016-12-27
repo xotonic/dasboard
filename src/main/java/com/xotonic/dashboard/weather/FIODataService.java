@@ -13,7 +13,7 @@ import java.util.logging.*;
  * 1000 единовременно)
  * @author xotonic
  */
-public class ForecastIOLoader implements WeatherLoader {
+public class FIODataService implements WeatherDataService {
     
     // Бесплатный APIKEY 
     private static final String APPKEY = "7a3f541cf9e9d01fd1be5eff81a80ee8";
@@ -87,7 +87,7 @@ public class ForecastIOLoader implements WeatherLoader {
             currentTDate = (Date) parserSDF.parseObject(currently.get().time());
             System.out.format("%s %f\n", currentTDate.toString(), currentT);
         } catch (ParseException ex) {
-            Logger.getLogger(ForecastIOLoader.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FIODataService.class.getName()).log(Level.SEVERE, null, ex);
         }
         FIODaily daily = new FIODaily(fio);
         //In case there is no daily data available
@@ -108,7 +108,7 @@ public class ForecastIOLoader implements WeatherLoader {
                     break;
                 }
             } catch (ParseException ex) {
-                Logger.getLogger(ForecastIOLoader.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(FIODataService.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
 
