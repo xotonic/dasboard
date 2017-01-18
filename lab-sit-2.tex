@@ -9,9 +9,11 @@
 
 % Поддержка русского языка (переносов, орфографии)
 \usepackage{polyglossia}
+\usepackage{microtype} % better management of overfulls
+\usepackage{ucharclasses}
+
 \setmainlanguage{russian} % Ставим русский главным
 \setotherlanguage{english} % Английский второстепенным
-
 % Отступы по ГОСТу
 \usepackage{geometry}
 \geometry{
@@ -22,6 +24,13 @@
 	right=1cm,
 }
 
+\usepackage{setspace}
+
+\hyphenpenalty=1000 % default 50
+\tolerance=500      % default 200
+
+\setTransitionsForLatin{\begingroup\hyphenrules{english}}{\endgroup}
+
 % Можно вставлять скрипты на Lua (компилить через lualatex)
 %\usepackage{luacode}
 
@@ -29,6 +38,9 @@
 % \begin{luacode}
 % tex.print(math.random())
 % \end{luacode}
+\begin{hyphenrules}{russian}
+\hyphenation{веб-фрейм-ворк}
+\end{hyphenrules}
 
 \usepackage{listings}
 \lstset{
@@ -85,7 +97,7 @@
 
 %%% СЕКЦИИ %%%
 %%%%%%%%%%%%%%
-
+\begin{spacing}{2.0}
 \section*{Цель работы}
 
 Разработать одностраничное веб-приложение с использованием веб-фрейворка Vaadin для отображения 
@@ -148,7 +160,7 @@
 \begin{enumerate}
 	\item Book of Vaadin: [Электронный ресурс]. URL: https://vaadin.com/book. (Дата обращения: 28.12.2016).
 \end{enumerate}	
-
+\end{spacing}
 \pagebreak
 \section*{Приложение А. Листинг программы}
 
