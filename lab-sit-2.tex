@@ -202,26 +202,26 @@
 \hbox to \hsize{\textit{ Структура\hfil Стр.}}
 \vskip .13in
 \hbox{{\bf  Интерфейсы}}
-\entityintro{WeatherDataService}{com.xotonic.dashboard.weather.WeatherDataService}{Интерфейс для взаимодействия с \texttt{\small DashboardUI}{\small 
+\entityintro{WeatherDataService}{com.xotonic.dashboard.weather.WeatherDataService}{Интерфейс для взаимодействия с \texttt{ DashboardUI}{ 
 \refdefined{com.xotonic.dashboard.ui.DashboardUI}}}
 \vskip .13in
 \hbox{{\bf  Классы}}
 \entityintro{Cities}{com.xotonic.dashboard.weather.Cities}{Список городов}
 \entityintro{FIODataService}{com.xotonic.dashboard.weather.FIODataService}{Загрузчик прогноза погоды с forecast.io.}
-\entityintro{WeatherData}{com.xotonic.dashboard.weather.WeatherData}{Класс для передачи информации от загрузчиков погодных информеров (\texttt{\small WeatherDataService}{\small 
+\entityintro{WeatherData}{com.xotonic.dashboard.weather.WeatherData}{Класс для передачи информации от загрузчиков погодных информеров (\texttt{ WeatherDataService}{ 
 \refdefined{com.xotonic.dashboard.weather.WeatherDataService}})}
 \vskip .1in
 \vskip .1in
 \subsubsection*{\label{com.xotonic.dashboard.weather.WeatherDataService}Интерфейс WeatherDataService}{
 \vskip .1in 
-Интерфейс для взаимодействия с \texttt{\small DashboardUI}{\small 
+Интерфейс для взаимодействия с \texttt{ DashboardUI}{ 
 \refdefined{com.xotonic.dashboard.ui.DashboardUI}}\vskip .1in 
 \subsubsection*{Объявление}{
 \begin{lstlisting}[frame=none]
 public interface WeatherDataService
 \end{lstlisting}
 
-\subsubsection*{Реализуют}{FIODataService\small{\refdefined{com.xotonic.dashboard.weather.FIODataService}}}
+\subsubsection*{Реализуют}{FIODataService{\refdefined{com.xotonic.dashboard.weather.FIODataService}}}
 \subsubsection*{Методы}{
 \vskip -2em
 \begin{itemize}
@@ -420,7 +420,7 @@ public WeatherData getData(Cities city) throws com.xotonic.dashboard.ExceptionFo
 }
 \subsubsection*{\label{com.xotonic.dashboard.weather.WeatherData}Класс WeatherData}{
 \vskip .1in 
-Класс для передачи информации от загрузчиков погодных информеров (\texttt{\small WeatherDataService}{\small 
+Класс для передачи информации от загрузчиков погодных информеров (\texttt{ WeatherDataService}{ 
 \refdefined{com.xotonic.dashboard.weather.WeatherDataService}})\vskip .1in 
 \subsubsection*{Объявление}{
 \begin{lstlisting}[frame=none]
@@ -487,7 +487,7 @@ public WeatherData()\end{lstlisting} %end signature
 public interface CurrencyDataService
 \end{lstlisting}
 
-\subsubsection*{Реализуют}{CBRDataService\small{\refdefined{com.xotonic.dashboard.currency.CBRDataService}}}
+\subsubsection*{Реализуют}{CBRDataService{\refdefined{com.xotonic.dashboard.currency.CBRDataService}}}
 \subsubsection*{Методы}{
 \vskip -2em
 \begin{itemize}
@@ -1200,7 +1200,7 @@ public WeatherUpdater(com.vaadin.ui.ComboBox placeSelect,java.util.ArrayList pla
 {\bf  Параметры}
   \begin{itemize}
    \item{
-\texttt{placeSelect} -- компонент со списком городов ( Порядок городов должен соответсвовать порядку в \texttt{\small Cities}{\small 
+\texttt{placeSelect} -- компонент со списком городов ( Порядок городов должен соответсвовать порядку в \texttt{ Cities}{ 
 \refdefined{com.xotonic.dashboard.weather.Cities}})}
    \item{
 \texttt{places} -- массив со списком городов в том же порядке, что и у placeSelect}
@@ -1392,7 +1392,7 @@ public java.lang.String what()\end{lstlisting} %end signature
 \hbox{{\bf  Классы}}
 \entityintro{MongoVisitorsDataService}{com.xotonic.dashboard.visitors.MongoVisitorsDataService}{Загрузчик/регистратор числа посещений из БД MongoDB\mbox{}\newline Порт, адрес, и БД сервера стандартные\mbox{}\newline Собсно, требуется рабочий mongod\mbox{}\newline Используется 3я версия драйвера
 
-Формат документа\mbox{}\newline \texttt{\small \{\ ip : string, count : integer\}}}
+Формат документа\mbox{}\newline \texttt{ \{\ ip : string, count : integer\}}}
 \entityintro{VisitorsData}{com.xotonic.dashboard.visitors.VisitorsData}{Информация по статистике посещений}
 \vskip .1in
 \vskip .1in
@@ -1404,7 +1404,7 @@ public java.lang.String what()\end{lstlisting} %end signature
 public interface VisitorsDataService
 \end{lstlisting}
 
-\subsubsection*{Реализуют}{MongoVisitorsDataService\small{\refdefined{com.xotonic.dashboard.visitors.MongoVisitorsDataService}}}
+\subsubsection*{Реализуют}{MongoVisitorsDataService{\refdefined{com.xotonic.dashboard.visitors.MongoVisitorsDataService}}}
 \subsubsection*{Методы}{
 \vskip -2em
 \begin{itemize}
@@ -1427,7 +1427,7 @@ void registerIP(java.lang.String ip) throws com.xotonic.dashboard.ExceptionForUs
 \vskip .1in 
 Загрузчик/регистратор числа посещений из БД MongoDB\mbox{}\newline Порт, адрес, и БД сервера стандартные\mbox{}\newline Собсно, требуется рабочий mongod\mbox{}\newline Используется 3я версия драйвера
 
-Формат документа\mbox{}\newline \texttt{\small \{\ ip : string, count : integer\}}\vskip .1in 
+Формат документа\mbox{}\newline \texttt{ \{\ ip : string, count : integer\}}\vskip .1in 
 \subsubsection*{Объявление}{
 \begin{lstlisting}[frame=none]
 public class MongoVisitorsDataService
@@ -1596,6 +1596,10 @@ public VisitorsData()\end{lstlisting} %end signature
 \section{Список литературы}
 \begin{enumerate}
 	\item Book of Vaadin: [Электронный ресурс]. URL: https://vaadin.com/book. (Дата обращения: 28.12.2016).
+  \item The MongoDB 3.2 Manual: [Электронный ресурс]. URL: https://docs.mongodb.com /v3.2/. (Дата обращения: 25.12.2016).
+  \item Java™ Platform Standard Ed. 8: [Электронный ресурс]. URL: https://docs.oracle.com /javase/8/docs/api/. (Дата обращения: 27.12.2016).
+  \item Java Platform Standard Edition 8 Documentation: [Электронный ресурс]. URL: https://docs.oracle.com/javase/8/docs/. (Дата обращения: 23.12.2016).
+  
 \end{enumerate}	
 
 \pagebreak
