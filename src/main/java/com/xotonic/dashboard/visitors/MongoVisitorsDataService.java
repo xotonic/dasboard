@@ -4,14 +4,14 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoTimeoutException;
 import com.mongodb.ServerAddress;
-
-import com.mongodb.client.*;
+import com.mongodb.client.AggregateIterable;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.UpdateOptions;
+import com.xotonic.dashboard.ExceptionForUser;
+import org.bson.Document;
+
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Updates.inc;
-import com.xotonic.dashboard.ExceptionForUser;
-import org.bson.*;
-
 import static java.util.Arrays.asList;
 
 /**
@@ -59,7 +59,7 @@ public class MongoVisitorsDataService implements VisitorsDataService {
         VisitorsData data = new VisitorsData();
         data.total = -1;
         data.unique = -1;
-        MongoCollection collection
+        MongoCollection<Document> collection
                 = connect();
         System.out.println("AGRREGATING");
 
