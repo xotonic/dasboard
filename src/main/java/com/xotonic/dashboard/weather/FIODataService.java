@@ -9,30 +9,38 @@ import java.util.Date;
 import java.util.logging.*;
 /**
  * Загрузчик прогноза погоды с forecast.io.<br>
- * <b>Ахтунг!</b> Сервис предоставляет ограниченноое количество запросов (всего 
+ * Следует помнить, что сервис предоставляет ограниченноое количество запросов (всего
  * 1000 единовременно)
  * @author xotonic
  */
 public class FIODataService implements WeatherDataService {
-    
-    // Бесплатный APIKEY 
+
+    /**
+     * Бесплатный APIKEY (ключ разработчика)
+     */
     private static final String APPKEY = "7a3f541cf9e9d01fd1be5eff81a80ee8";
 
-    // Широты городов
+    /** Широты городов */
     private static final String lats[] = 
     {
         "55.7522200", // MSK
         "59.9386300", // SPB
         "55.0415000"  // NSK
     };
-    // Долготы
+    /** Долготы городов */
     private static final String lons[] = 
     {
         "37.6155600",// MSK
         "30.3141300",// SPB
         "82.9346000" // NSK
     };
-    
+
+    /**
+     * Получить информацию о погоде в конкретном городе
+     * @param city Запрашиваемый город
+     * @return
+     * @throws ExceptionForUser
+     */
     @Override
     public WeatherData getData(Cities city) throws ExceptionForUser {
         WeatherData data = new WeatherData();

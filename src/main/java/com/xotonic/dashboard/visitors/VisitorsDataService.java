@@ -8,7 +8,7 @@ package com.xotonic.dashboard.visitors;
 import com.xotonic.dashboard.ExceptionForUser;
 
 /**
- *
+ * Интерфейс для службы по учету IP-адресов посетителей
  * @author xotonic
  */
 public interface VisitorsDataService {

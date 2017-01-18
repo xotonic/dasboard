@@ -16,16 +16,41 @@ import java.util.Calendar;
  */
 public class WeatherUpdater implements Button.ClickListener, Runnable {
 
-    // Погода
+    /**
+     * Информация о погоде в определенном населенном пункте
+     */
     private WeatherData weatherData = new WeatherData();
+    /**
+     * НП, который будет загружаться по умолчанию
+     */
     public final int defaultCityId = Cities.NSK.ordinal() - 1;
+    /**
+     * Выпадающий список с НП
+     */
     private final ComboBox placeSelect;
+    /**
+     * Лист наименований НП
+     */
     private final ArrayList<String> places;
+    /**
+     * Надпись с текущей температурой
+     */
     private final Label currentTemperature;
+    /**
+     * Надпись с температурой на завтра
+     */
     private final Label tomorrowTemperature;
+    /**
+     * Надпись с временем последнего обновления
+     */
     private final Label timeStatusValueLabel;
+    /**
+     * Метка, отключающая вывод сообщения пользователю об успешном обновлении
+     */
     private boolean silent;
-
+    /**
+     * Формат числа для отображения градусов по Цельсию
+     */
     private final DecimalFormat weatherFormat;
     /**
      * @param placeSelect компонент со списком городов ( Порядок городов должен
@@ -53,6 +78,10 @@ public class WeatherUpdater implements Button.ClickListener, Runnable {
 
     }
 
+    /**
+     * Обработчик события по клику на кнопку Обновить
+     * @param event
+     */
     @Override
     public void buttonClick(Button.ClickEvent event) {
         String selectedCity = (String) placeSelect.getValue();
@@ -67,6 +96,9 @@ public class WeatherUpdater implements Button.ClickListener, Runnable {
 
     }
 
+    /**
+     * Обновить текст с временем последнего обновления
+     */
     private void updateDateLabel() {
         if (timeStatusValueLabel != null) {
             timeStatusValueLabel.setValue(
@@ -75,6 +107,10 @@ public class WeatherUpdater implements Button.ClickListener, Runnable {
         }
     }
 
+    /**
+     * Обновить информацию о погоде
+     * @param id номер населеного пункта
+     */
     private void updateWeather(int id) {
         WeatherDataService loader = new FIODataService();
         try {
@@ -83,21 +119,23 @@ public class WeatherUpdater implements Button.ClickListener, Runnable {
             Notification.show(e.what(), Notification.Type.ERROR_MESSAGE);
         }
     }
-
+    /**
+     * Эмуляция нажатия на кнопку обновления при запуске класса как Runnable
+     */
     @Override
     public void run() {
         buttonClick(null);
     }
 
     /**
-     * @return the silent
+     *  Вернуть флаг, включающий оповещение пользователя об успешном обновлении
      */
     public boolean isSilent() {
         return silent;
     }
 
     /**
-     * @param silent the silent to set
+     * Поставить флаг, включающий оповещение пользователя об успешном обновлении
      */
     public void setSilent(boolean silent) {
         this.silent = silent;

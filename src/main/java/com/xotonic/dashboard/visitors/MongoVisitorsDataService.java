@@ -16,7 +16,7 @@ import static java.util.Arrays.asList;
 
 /**
  * Загрузчик/регистратор числа посещений из БД MongoDB <br>
- * Порт, адрес, и БД сервера дефолтные <br>
+ * Порт, адрес, и БД сервера стандартные <br>
  * Собсно, требуется рабочий mongod <br>
  * Используется 3я версия драйвера
  * <p>
@@ -28,10 +28,24 @@ import static java.util.Arrays.asList;
  */
 public class MongoVisitorsDataService implements VisitorsDataService {
 
+    /**
+     * Адрес сервера БД
+     */
     String MongoDBServerAddress = "localhost";
+    /**
+     * Имя БД
+     */
     String dbName = "test";
+    /**
+     * Порт сервера БД
+     */
     int MongoDBServerPort = 27017;
 
+    /**
+     * Устрановить соединение с сервером БД
+     * @return
+     * @throws ExceptionForUser
+     */
     private MongoCollection connect() throws ExceptionForUser {
         System.out.println("CONNECTING TO MONGO SERVER");
         try {
@@ -54,6 +68,11 @@ public class MongoVisitorsDataService implements VisitorsDataService {
         }
     }
 
+    /**
+     * Получить информацию о посещениях из БД
+     * @return
+     * @throws ExceptionForUser
+     */
     @Override
     public VisitorsData getData() throws ExceptionForUser {
         VisitorsData data = new VisitorsData();
@@ -78,6 +97,11 @@ public class MongoVisitorsDataService implements VisitorsDataService {
         return data;
     }
 
+    /**
+     * Записать адрес в БД
+     * @param ip IP-адрес
+     * @throws ExceptionForUser
+     */
     @Override
     public void registerIP(String ip) throws ExceptionForUser {
         try {

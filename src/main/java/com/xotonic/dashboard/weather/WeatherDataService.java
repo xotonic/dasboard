@@ -2,6 +2,7 @@
 package com.xotonic.dashboard.weather;
 
 import com.xotonic.dashboard.ExceptionForUser;
+import com.xotonic.dashboard.ui.DashboardUI;
 
 /**
  * Интерфейс для взаимодействия с {@link DashboardUI}

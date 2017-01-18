@@ -23,16 +23,36 @@ import org.xml.sax.SAXException;
  */
 public class CBRDataService implements CurrencyDataService {
 
+    /**
+     * Уникальный код Американского доллара в XML
+     */
     private final String ID_USD = "R01235";
+    /**
+     * Уникальный код Евро в XML
+     */
     private final String ID_EUR = "R01239";
 
+    /**
+     * URL запроса к Центробанку
+     */
     private final String URL = "http://www.cbr.ru/scripts/XML_dynamic.asp?date_req1=%s&date_req2=%s&VAL_NM_RQ=%s";
 
+    /**
+     * Вставить в URL параметры запроса
+     * @param from Начальная дата
+     * @param to Конечная дата
+     * @param id Идентификатор валюты
+     * @return Готовый URL для отправки на сервер ЦБ
+     */
     private String buildUrl(Date from, Date to, String id) {
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
         return String.format(URL, format.format(from), format.format(to), id);
     }
 
+    /**
+     * Найти последний рабочий день в ЦБ
+     * @param cal
+     */
     private void setLastWorkingDay(Calendar cal) {
         if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
             cal.add(Calendar.DAY_OF_YEAR, -1);
@@ -41,6 +61,11 @@ public class CBRDataService implements CurrencyDataService {
         }
     }
 
+    /**
+     * Выполнить запрос на сайт Центробанка по обеим валютам
+     * @return Информация о валюте
+     * @throws ExceptionForUser
+     */
     @Override
     public CurrencyData getData() throws ExceptionForUser {
         CurrencyData cd = new CurrencyData();

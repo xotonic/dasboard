@@ -17,12 +17,23 @@ import java.util.ArrayList;
 @Push // Аддон для управлением UI из другого потока
 public class DashboardUI extends UI {
 
-    
+    /**
+     * Компонент для обновления погоды
+     */
     WeatherUpdater weatherUpdater;
+    /**
+     * Компонент для обновления курса валют
+     */
     CurrencyUpdater currencyUpdater;
+    /**
+     * Компонент для обновления количества посещений
+     */
     VisitorsUpdater visitorsUpdater;
-   
-    
+
+    /**
+     * Инициализация приложения
+     * @param vaadinRequest обьект класса-обертки HttpRequest
+     */
     @Override
     protected void init(VaadinRequest vaadinRequest) {
         VerticalLayout vlayout = new VerticalLayout();
@@ -210,6 +221,9 @@ public class DashboardUI extends UI {
         this.access(visitorsUpdater);
     }
 
+    /**
+     * Сервлет приложения
+     */
     @WebServlet(urlPatterns = "/*", name = "DashboardUIServlet", asyncSupported = true)
     @VaadinServletConfiguration(ui = DashboardUI.class, productionMode = false)
     public static class DashboardUIServlet extends VaadinServlet {

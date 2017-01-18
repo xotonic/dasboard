@@ -2,6 +2,7 @@
   <library name="Maven: com.eclipsesource.minimal-json:minimal-json:0.9.4">
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/com/eclipsesource/minimal-json/minimal-json/0.9.4/minimal-json-0.9.4.jar!/" />
+      <root url="jar://D:/downloads/TeXDoclet.jar!/" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$MAVEN_REPOSITORY$/com/eclipsesource/minimal-json/minimal-json/0.9.4/minimal-json-0.9.4-javadoc.jar!/" />

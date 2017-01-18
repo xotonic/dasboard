@@ -12,22 +12,36 @@ import com.xotonic.dashboard.visitors.VisitorsDataService;
 
 /**
  * Обновление счетчика посещения<br>
- * Берет контроль над 2 UI компонентами:<br>
- * + UniqueLabel - метка для записи числа уникальных IP<br>
- * + TotalLabel - метка для записи общего числа посещений
+
  * @author xotonic
  */
 public class VisitorsUpdater implements Button.ClickListener, Runnable {
 
+    /**
+     * Метка для записи числа уникальных IP
+     */
     private final Label uniqueLabel;
+    /**
+     * Метка для записи общего числа посещений
+     */
     private final Label totalLabel;
+    /**
+     * Информация о посещениях
+     */
     private VisitorsData visitorsData = new VisitorsData();
 
+    /**
+     * Конструктор класса
+     */
     public VisitorsUpdater(Label uniqueLabel, Label totalLabel) {
         this.uniqueLabel = uniqueLabel;
         this.totalLabel = totalLabel;
     }
 
+    /**
+     * Обработчик нажатия на кнопку обновить. На данный момент копка отсутсвует, но обработчик используется
+     * при перезагрузке страницы
+     */
     @Override
     public void buttonClick(Button.ClickEvent event) {
         final WebBrowser webBrowser = Page.getCurrent().getWebBrowser();
@@ -37,11 +51,15 @@ public class VisitorsUpdater implements Button.ClickListener, Runnable {
         totalLabel.setValue(Integer.toString(visitorsData.total));
     }
 
+    /** Обновление информации при запуске класса как Runnable */
     @Override
     public void run() {
         buttonClick(null);
     }
 
+    /**
+     * Загрузить данные из базы данных
+     */
     private void updateVisitors() {
         VisitorsDataService loader = new MongoVisitorsDataService();
         try {
@@ -51,6 +69,10 @@ public class VisitorsUpdater implements Button.ClickListener, Runnable {
         }
     }
 
+    /**
+     * Сохранить IP-адрес в базе данных
+     * @param ip IP-адрес
+     */
     private void upsertAddress(String ip) {
         try {
             new MongoVisitorsDataService().registerIP(ip);

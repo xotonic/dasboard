@@ -18,20 +18,41 @@ import java.util.Calendar;
  * @author xotonic
  */
 public class CurrencyUpdater implements Button.ClickListener, Runnable {
-
+    /**
+     * Надпись для значения текущего курса доллара
+     */
     private final Label usdLabel;
+    /**
+     * Надпись для значения изменения текущего курса доллара
+     */
     private final Label usdDeltaLabel;
+    /**
+     * Надпись для значения текущего курса евро
+     */
     private final Label eurLabel;
+    /**
+     * Надпись для значения изменения текущего курса евро
+     */
     private final Label eurDeltaLabel;
+    /**
+     * Метка, отключающая вывод сообщения пользователю об успешном обновлении
+     */
     private boolean silent;
+    /**
+     * Надпись с временем последнего обновления
+     */
     private final Label timeStatusValueLabel;
 
-    // Форматирование для строк с числовыми значениями
+    /** Форматирование для строк с числовыми значениями курса */
     private final DecimalFormat currencyFormat;
+    /** Форматирование для строк с числовыми значениями изменения курса */
     private final DecimalFormat currencyDeltaFormat;
 
-    private CurrencyData currencyData = new CurrencyData();
     /**
+     * Информация о текущем курсе
+     */
+    private CurrencyData currencyData = new CurrencyData();
+    /**  Конструктор
      * @param usdLabel курс доллара
      * @param usdDeltaLabel изменение курса доллара
      * @param eurLabel курс евро
@@ -60,6 +81,9 @@ public class CurrencyUpdater implements Button.ClickListener, Runnable {
         currencyDeltaFormat.setRoundingMode(RoundingMode.CEILING);
     }
 
+    /**
+     * Обновить информацию о курсе валют
+     */
     private void updateCurrency() {
         CurrencyDataService loader = new CBRDataService();
         try {
@@ -69,6 +93,9 @@ public class CurrencyUpdater implements Button.ClickListener, Runnable {
         }
     }
 
+    /**
+     * Обновить текст с временем последнего обновления
+     */
     private void updateDateLabel() {
         if (timeStatusValueLabel != null) {
             timeStatusValueLabel.setValue(
@@ -77,6 +104,10 @@ public class CurrencyUpdater implements Button.ClickListener, Runnable {
         }
     }
 
+    /**
+     * Обработчик клика по кнопке 'Обновить'
+     * @param event
+     */
     @Override
     public void buttonClick(Button.ClickEvent event) {
         updateCurrency();
@@ -95,20 +126,23 @@ public class CurrencyUpdater implements Button.ClickListener, Runnable {
         updateDateLabel();
     }
 
+    /**
+     * Эмуляция нажатия на кнопку обновления при запуске класса как Runnable
+     */
     @Override
     public void run() {
         buttonClick(null);
     }
 
     /**
-     * @return the silent
+     *  Вернуть флаг, включающий оповещение пользователя об успешном обновлении
      */
     public boolean isSilent() {
         return silent;
     }
 
     /**
-     * @param silent the silent to set
+     * Поставить флаг, включающий оповещение пользователя об успешном обновлении
      */
     public void setSilent(boolean silent) {
         this.silent = silent;
